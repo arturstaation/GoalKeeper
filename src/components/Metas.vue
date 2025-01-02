@@ -10,8 +10,8 @@
         </div>
         <div v-if="componentData.subMetas.length > 0">
             <ul>
-                <li v-for="subMeta in subMetas" :key="subMeta">
-                <SubMetas :nome="subMeta.nome" :descricao="subMeta.descricao" :estado="subMeta.estado"></SubMetas>
+                <li v-for="sm in subMetas" :key="sm.id">
+                <SubMetas :nome="sm.nome" :descricao="sm.descricao" :estado="sm.estado"></SubMetas>
             </li>
             </ul>
         </div>
@@ -25,7 +25,7 @@ import SubMetas from './SubMetas.vue';
 
 interface MetasComponentProperties {
     nome: string,
-    descricao: string,
+    descricao?: string,
     subMetas: SubMeta[],
     estado: string,
 
@@ -33,7 +33,7 @@ interface MetasComponentProperties {
 
 interface MetasComponentData {
     nome: string,
-    descricao: string,
+    descricao?: string,
     subMetas: SubMeta[],
     estado: string,
 }
@@ -55,6 +55,7 @@ const componentData : MetasComponentData = {
 const addSubMeta = () => {
 
     componentData.subMetas.push({
+    id: componentData.subMetas.length + 1,
     nome:`SubMeta ${componentData.subMetas.length + 1}`,
     historico: [],
     estado: "Não Inciado"

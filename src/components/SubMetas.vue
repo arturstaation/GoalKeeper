@@ -13,14 +13,14 @@
 
 interface SubMetasComponentProperties {
     nome: string,
-    descricao: string,
+    descricao?: string,
     estado: string,
 
 }
 
 interface SubMetasComponentData {
     nome: string,
-    descricao: string,
+    descricao?: string,
     estado: string,
 }
 
