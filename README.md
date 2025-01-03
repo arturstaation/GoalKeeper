@@ -33,11 +33,11 @@ npm run build
 ```
 
 ### Atualizar GH Pages
-Sobe as mudanças para a branch principal
-Depois executa esses comandos:
-npm run build
-git add dist -f
-git commit -am "mensagem"
-git subtree push --prefix dist origin gh-pages
+Sobe as mudanças para a branch principal<br>
+Depois executa esses comandos:<br>
+npm run build<br>
+git add dist -f<br>
+git commit -am "mensagem"<br>
+git subtree push --prefix dist origin gh-pages<br>
 
-Video base: https://www.youtube.com/watch?v=yo2bMGnIKE8
+Video base: https://www.youtube.com/watch?v=yo2bMGnIKE8<br>
