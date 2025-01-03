@@ -14,6 +14,8 @@
 
 import {reactive, ref, nextTick} from 'vue';
 
+import SubMeta from '@/interfaces/SubMeta';
+
 export enum ESubMetasEventsNames{
     onDeleteSubMeta = 'deleteSubMeta',
     onUpdateSubMeta = 'updateSubMeta',
@@ -21,7 +23,7 @@ export enum ESubMetasEventsNames{
 
 interface ISubMetasEvents{
     (e: ESubMetasEventsNames.onDeleteSubMeta, SubMetaId : number) : void;
-    (e: ESubMetasEventsNames.onUpdateSubMeta, SubMeta : SubMeta) : void;
+    (e: ESubMetasEventsNames.onUpdateSubMeta, SM : SubMeta) : void;
 }
 
 interface SubMetasComponentProperties {
@@ -35,6 +37,7 @@ interface SubMetasComponentProperties {
 interface SubMetasComponentData {
     nome: string,
     descricao?: string,
+    historico?: string[],
     estado: string,
     isEdit: boolean,
 }
@@ -99,7 +102,8 @@ const updateSubMeta = () => {
         nome: componentData.nome,
         descricao: componentData.descricao,
         estado: componentData.estado,
-        historico: componentData.historico
+        historico: componentData.historico,
+        isDeleted: false
 
     }
 

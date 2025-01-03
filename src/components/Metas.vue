@@ -25,6 +25,7 @@
 
 import {ref, reactive,nextTick, watch} from 'vue';
 import SubMeta from '@/interfaces/SubMeta';
+import Meta from '@/interfaces/Meta';
 import SubMetas from './SubMetas.vue';
 
 export enum EMetasEventsNames{
@@ -80,7 +81,8 @@ const addSubMeta = () => {
     componentData.subMetas.push({
     id: numero,
     nome:`SubMeta ${numero}`,
-    estado: "Não Inciado"
+    estado: "Não Inciado",
+    isDeleted: false
     });
 
     componentData.historico.push(`SubMeta ${numero} criada`);
@@ -148,6 +150,7 @@ const updateMeta = () =>{
         subMetas: componentData.subMetas,
         historico: componentData.historico,
         estado: componentData.estado,
+        isDeleted: false,
 
     }
     emits(EMetasEventsNames.onUpdateMeta, updatedMeta);
@@ -160,7 +163,7 @@ const updateSubMeta = (subMeta : SubMeta) => {
     if(index !== -1){
 
     componentData.subMetas[index] = subMeta;
-    componentData.historico = [...componentData.historico, ...componentData.subMetas[index].historico];
+    componentData.historico = [...componentData.historico, ...componentData.subMetas[index].historico!];
     componentData.subMetas[index].historico = undefined;
 
     }
