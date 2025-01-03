@@ -2,6 +2,7 @@ export default interface SubMeta {
     id: number,
     nome: string,
     descricao?: string,
-    historico: string[],
+    historico?: string[],
     estado: string,
+    isDeleted: boolean,
 }

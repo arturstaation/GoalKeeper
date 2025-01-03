@@ -2,9 +2,11 @@
   <button :onclick="addMeta">Adicionar Meta</button>
   <div v-if="metasList.length > 0">
     <ul>
-      <li v-for="m in metasList" :key="m.id">
-        <Metas :id="m.id" :nome="m.nome" :sub-metas="m.subMetas" :estado="m.estado" :descricao="m.descricao" @delete-meta="deleteMeta"></Metas>
-      </li>
+      <div v-for="m in metasList">
+        <li  :key="m.id" v-if="!m.isDeleted">
+        <Metas :id="m.id" :nome="m.nome" :sub-metas="m.subMetas" :estado="m.estado" :descricao="m.descricao" :historico="m.historico" @delete-meta="deleteMeta"></Metas>
+        </li>
+      </div>
     </ul>
     </div>
   
@@ -36,7 +38,8 @@ const addMeta = () =>{
     nome:`Meta ${numero}`,
     subMetas: [],
     historico: [],
-    estado: "Não Inciado"
+    estado: "Não Inciado",
+    isDeleted: false,
   })
 };
 
@@ -45,7 +48,7 @@ const deleteMeta = (id: number) =>{
   const index = metasList.value.findIndex((m : Meta) => m.id === id);
 
   if (index !== -1) {
-    metasList.value.splice(index, 1);
+    metasList.value[index].isDeleted = true;
   }
 
 }
@@ -53,7 +56,4 @@ const deleteMeta = (id: number) =>{
 </script>
 
 <style scoped>
-btn{
-  color:red;
-}
 </style>

@@ -7,5 +7,6 @@ export default interface Meta {
     subMetas: SubMeta[],
     historico: string[],
     estado: string,
+    isDeleted: boolean,
 }
 
