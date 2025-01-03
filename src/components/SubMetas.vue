@@ -3,7 +3,7 @@
         <div>
             <h2> {{ componentData.nome }} </h2>
             <h4> {{ componentData.descricao }} </h4>
-            <btn>Deletar SubMeta</btn>
+            <button :onclick="deleteSubMeta">Deletar SubMeta</button>
         </div>
     </div>
     
@@ -11,7 +11,16 @@
 
 <script lang="ts">
 
+export enum ESubMetasEventsNames{
+    onDeleteSubMeta = 'deleteSubMeta',
+}
+
+interface ISubMetasEvents{
+    (e: ESubMetasEventsNames.onDeleteSubMeta, SubMetaId : number) : void;
+}
+
 interface SubMetasComponentProperties {
+    id: number,
     nome: string,
     descricao?: string,
     estado: string,
@@ -34,5 +43,13 @@ const componentData : SubMetasComponentData = {
     descricao: componentProperties.descricao,
     estado: componentProperties.estado
 }
+
+const emits = defineEmits<ISubMetasEvents>();
+
+const deleteSubMeta = () =>{
+    
+    emits(ESubMetasEventsNames.onDeleteSubMeta, componentProperties.id);
+    
+};
 
 </script>
