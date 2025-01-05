@@ -52,7 +52,8 @@ const deleteMeta = (id: number) =>{
     metasList.value[index].isDeleted = true;
   }
 
-}
+};
+
 
 </script>
 

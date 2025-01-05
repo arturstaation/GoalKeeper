@@ -6,7 +6,7 @@
             {{ componentData.nome }}
         </h1>
         <input v-else ref="editInput" v-model="editableName" @blur="cancelEdit">
-        <Estado :estado="componentData.estado"></Estado>
+        <Estado :estado="componentData.estado" @update-estado="updateEstado"></Estado>
         </div>
         <h3 @click="changeDescription" v-if="!componentData.isEditDescription"> {{ componentData.descricao ?? 'Descrição'}} </h3>
         <input v-else ref="editInputDescription" v-model="editableName" @blur="cancelEditDescription">
@@ -216,6 +216,11 @@ if(editableName.value){
 }
 updateMeta();
 };
+
+const updateEstado = (estado : Estados) => {
+  componentData.estado = estado;
+  updateMeta();
+}
 
 
 </script>

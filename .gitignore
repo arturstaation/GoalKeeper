@@ -7,10 +7,13 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+#Folders
 node_modules
 .DS_Store
 .vscode
+.vscode/
 dist
+dist/
 dist-ssr
 coverage
 *.local
