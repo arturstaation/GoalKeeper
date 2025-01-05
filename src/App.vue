@@ -4,7 +4,7 @@
     <ul>
       <div v-for="m in metasList">
         <li  :key="m.id" v-if="!m.isDeleted">
-        <Metas :id="m.id" :nome="m.nome" :sub-metas="m.subMetas" :estado="m.estado" :descricao="m.descricao" :historico="m.historico" @delete-meta="deleteMeta"></Metas>
+        <Metas :id="m.id" :nome="m.nome" :sub-metas="m.subMetas" :estado="m.estado" :descricao="m.descricao" :historico="m.historico" @delete-meta="deleteMeta" @update-meta="updateMeta"></Metas>
         </li>
       </div>
     </ul>
@@ -51,6 +51,16 @@ const deleteMeta = (id: number) =>{
   if (index !== -1) {
     metasList.value[index].isDeleted = true;
   }
+
+};
+
+const updateMeta = (meta: Meta) =>{
+
+const index = metasList.value.findIndex((m : Meta) => m.id === meta.id);
+
+if (index !== -1) {
+  metasList.value[index] = meta;
+}
 
 };
 
