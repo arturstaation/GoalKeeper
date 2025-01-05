@@ -119,7 +119,6 @@ const updateSubMeta = () => {
         estado: componentData.estado,
         historico: componentData.historico,
         isDeleted: false
-
     }
 
     emits(ESubMetasEventsNames.onUpdateSubMeta, updatedSubMeta);
@@ -162,6 +161,9 @@ const cancelEditDescription = () => {
 };
 
 const updateEstado = (estado : Estados) => {
+  if(!componentData.historico)
+    componentData.historico = [];
+  componentData.historico.push(`Estado da SubMeta ${componentProperties.id}: ${componentData.nome} alterado de ${componentData.estado} para ${estado}`);
   componentData.estado = estado;
   updateSubMeta();
 }

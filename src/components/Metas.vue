@@ -143,7 +143,7 @@ const cancelEdit = () => {
 
         editableName.value = editableName.value.trim();
         if(editableName.value != componentData.nome){
-            componentData.historico.push(`Nome alterado de ${componentData.nome} para ${editableName.value}`);
+            componentData.historico.push(`Nome da meta ${componentProperties.id} alterado de ${componentData.nome} para ${editableName.value}`);
             componentData.nome = editableName.value;
         }
     }
@@ -218,6 +218,7 @@ updateMeta();
 };
 
 const updateEstado = (estado : Estados) => {
+  componentData.historico.push(`Estado da Meta ${componentProperties.id}: ${componentData.nome} alterado de ${componentData.estado} para ${estado}`);
   componentData.estado = estado;
   updateMeta();
 }
