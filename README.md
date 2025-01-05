@@ -38,6 +38,7 @@ Depois executa esses comandos:<br>
 npm run build<br>
 git add dist -f<br>
 git commit -am "mensagem"<br>
+git push origin --delete gh-pages<br>
 git subtree push --prefix dist origin gh-pages<br>
 
 Video base: https://www.youtube.com/watch?v=yo2bMGnIKE8<br>

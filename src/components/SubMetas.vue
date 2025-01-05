@@ -1,9 +1,13 @@
 <template>
     <div>
         <div>
+            <div>
             <h2 v-if="!componentData.isEdit" @click="changeName"> {{ componentData.nome }} </h2>
             <input v-else ref="editInput" v-model="editableName" @blur="cancelEdit">
-            <h4> {{ componentData.descricao }} </h4>
+            <Estado :estado="componentData.estado"></Estado>
+            </div>
+            <h4 @click="changeDescription" v-if="!componentData.isEditDescription"> {{ componentData.descricao ?? 'Descrição'}} </h4>
+            <input v-else ref="editInputDescription" v-model="editableName" @blur="cancelEditDescription">
             <button :onclick="deleteSubMeta">Deletar SubMeta</button>
         </div>
     </div>
@@ -13,6 +17,8 @@
 <script lang="ts">
 
 import {reactive, ref, nextTick} from 'vue';
+import { Estados } from "@/enums/Estados";
+import Estado from './Estado.vue';
 
 import SubMeta from '@/interfaces/SubMeta';
 
@@ -30,7 +36,7 @@ interface SubMetasComponentProperties {
     id: number,
     nome: string,
     descricao?: string,
-    estado: string,
+    estado: Estados,
 
 }
 
@@ -38,8 +44,9 @@ interface SubMetasComponentData {
     nome: string,
     descricao?: string,
     historico?: string[],
-    estado: string,
+    estado: Estados,
     isEdit: boolean,
+    isEditDescription: boolean,
 }
 
 </script>
@@ -52,17 +59,24 @@ const componentData = reactive<SubMetasComponentData>({
     descricao: componentProperties.descricao,
     estado: componentProperties.estado,
     isEdit: false,
+    isEditDescription: false,
 });
 
 const emits = defineEmits<ISubMetasEvents>();
 
 const deleteSubMeta = () => {
     
+    componentData.estado = Estados.Deletado;
     emits(ESubMetasEventsNames.onDeleteSubMeta, componentProperties.id);
     
 };
 
 const changeName = () =>{
+
+    if(componentData.isEditDescription){
+        cancelEditDescription();
+        updateSubMeta();
+    }
 
     componentData.isEdit = true;
 
@@ -78,6 +92,7 @@ const changeName = () =>{
 };
 
 const editInput = ref(null);
+const editInputDescription = ref(null);
 const editableName = ref<string>();
 
 const cancelEdit = () => {
@@ -109,6 +124,41 @@ const updateSubMeta = () => {
 
     emits(ESubMetasEventsNames.onUpdateSubMeta, updatedSubMeta);
     componentData.historico = undefined;
-}
+};
+
+const changeDescription = () =>{
+
+    if(componentData.isEdit){
+        cancelEdit();
+        updateSubMeta();
+    }
+    componentData.isEditDescription = true;
+
+    editableName.value = componentData.descricao;
+
+    nextTick(() => {
+        const inputElement = editInputDescription.value;
+        if (inputElement) {
+        inputElement.focus(); 
+        }
+    });
+
+};
+
+const cancelEditDescription = () => {
+    
+    componentData.isEditDescription = false;
+    if(editableName.value){
+
+        editableName.value = editableName.value.trim();
+        if(editableName.value != componentData.descricao){
+            if(!componentData.historico)
+                componentData.historico = [];
+            componentData.historico.push(`Descrição da Submeta ${componentProperties.id} alterado de ${componentData.descricao} para ${editableName.value}`);
+            componentData.descricao = editableName.value;
+        }
+    }
+    updateSubMeta();
+};
 
 </script>

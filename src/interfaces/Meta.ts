@@ -1,3 +1,4 @@
+import { Estados } from "@/enums/Estados";
 import SubMeta from "./SubMeta";
 
 export default interface Meta {
@@ -6,7 +7,7 @@ export default interface Meta {
     descricao?: string,
     subMetas: SubMeta[],
     historico: string[],
-    estado: string,
+    estado: Estados,
     isDeleted: boolean,
 }
 

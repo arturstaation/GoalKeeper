@@ -16,6 +16,7 @@
 <script lang="ts">
 
 import { onMounted, ref } from 'vue';
+import { Estados } from "@/enums/Estados";
 import Metas from './components/Metas.vue';
 import Meta from './interfaces/Meta';
 
@@ -38,7 +39,7 @@ const addMeta = () =>{
     nome:`Meta ${numero}`,
     subMetas: [],
     historico: [],
-    estado: "Não Inciado",
+    estado: Estados.NaoIniciado,
     isDeleted: false,
   })
 };
