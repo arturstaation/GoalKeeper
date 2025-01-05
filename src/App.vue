@@ -27,9 +27,17 @@ import Meta from './interfaces/Meta';
 const metasList = ref<Meta[]>([]);
 
 
-onMounted(()=>{
-  metasList.value = [];
-})
+onMounted(() => {
+  const metasSalvas = localStorage.getItem('metas');
+
+  if (metasSalvas) {
+    metasList.value = JSON.parse(metasSalvas); 
+  } else {
+    metasList.value = []; 
+  }
+  
+  localStorage.setItem('metas', JSON.stringify(metasList.value));
+});
 
 const addMeta = () =>{
   
@@ -42,6 +50,8 @@ const addMeta = () =>{
     estado: Estados.NaoIniciado,
     isDeleted: false,
   })
+
+  localStorage.setItem('metas', JSON.stringify(metasList.value));
 };
 
 const deleteMeta = (id: number) =>{
@@ -52,6 +62,7 @@ const deleteMeta = (id: number) =>{
     metasList.value[index].isDeleted = true;
   }
 
+  localStorage.setItem('metas', JSON.stringify(metasList.value));
 };
 
 const updateMeta = (meta: Meta) =>{
@@ -62,6 +73,7 @@ if (index !== -1) {
   metasList.value[index] = meta;
 }
 
+localStorage.setItem('metas', JSON.stringify(metasList.value));
 };
 
 
