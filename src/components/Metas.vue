@@ -1,38 +1,55 @@
 <template>
+    <v-expansion-panels>
+        <v-expansion-panel>
+            <v-expansion-panel-title @change="updatePanelState">
+                <div class="d-flex align-center justify-space-between w-100">
+                        {{ editableName }}
+                        <Estado :estado="componentData.estado" readonly></Estado>
+                    <v-icon>{{ componentData.isOpen ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+                </div>
+            </v-expansion-panel-title>
+    <v-expansion-panel-text>
     <div>
         <div>
+            <div>
+                <h1 @click="changeName" v-if="!componentData.isEdit">
+                    {{ editableName }}
+                </h1>
+                <input v-else ref="editInput" v-model="editableName" @blur="cancelEdit">
+                <Estado :estado="componentData.estado" @update-estado="updateEstado"></Estado>
+            </div>
+            <h3 @click="changeDescription" v-if="!componentData.isEditDescription"> {{ componentData.descricao ?? 'Descrição'}} </h3>
+            <input v-else ref="editInputDescription" v-model="editableDescription" @blur="cancelEditDescription">
+            <button :onclick="addSubMeta">Adicionar SubMeta</button>
+            <button :onclick="deleteMeta">Deletar Meta</button>
+        </div>
         <div>
-        <h1 @click="changeName" v-if="!componentData.isEdit">
-            {{ componentData.nome }}
-        </h1>
-        <input v-else ref="editInput" v-model="editableName" @blur="cancelEdit">
-        <Estado :estado="componentData.estado" @update-estado="updateEstado"></Estado>
-        </div>
-        <h3 @click="changeDescription" v-if="!componentData.isEditDescription"> {{ componentData.descricao ?? 'Descrição'}} </h3>
-        <input v-else ref="editInputDescription" v-model="editableName" @blur="cancelEditDescription">
-        <button :onclick="addSubMeta">Adicionar SubMeta</button>
-        <button :onclick="deleteMeta">Deletar Meta</button>
-        </div>
-        <div v-if="componentData.subMetas.length > 0">
-            <ul>
-                <div v-for="sm in subMetas" >
-                    <li :key="sm.id" v-if="!sm.isDeleted">
-                        <SubMetas :nome="sm.nome" :descricao="sm.descricao" :estado="sm.estado" :id="sm.id" @delete-sub-meta="deleteSubMeta" @update-sub-meta="updateSubMeta"></SubMetas>
-                    </li>
-                </div>
-            </ul>
-        </div>
+
+            <draggable v-if="componentData.subMetas.length > 0" v-model="componentData.subMetas" tag="ol" itemKey="indice" @end="updateOrder">
+      <template #item="{element: sm}"> 
+        <li :key="sm.id" v-if="!sm.isDeleted">
+            <SubMetas :sub-meta="sm" @delete-sub-meta="deleteSubMeta" @update-sub-meta="updateSubMeta"></SubMetas>
+        </li>
+      </template>
+    </draggable>
     </div>
+             
+    </div>
+</v-expansion-panel-text>
+</v-expansion-panel>
+</v-expansion-panels>
 </template>
 
 <script lang="ts">
 
-import {ref, reactive,nextTick } from 'vue';
-import SubMeta from '@/interfaces/SubMeta';
-import Meta from '@/interfaces/Meta';
+import draggable from "vuedraggable";
+import {ref, reactive,nextTick, watch } from 'vue';
+import type SubMeta from '@/interfaces/SubMeta';
+import type Meta from '@/interfaces/Meta';
 import SubMetas from './SubMetas.vue';
 import Estado from './Estado.vue';
 import { Estados } from "@/enums/Estados";
+import type { SortableEvent } from "sortablejs"
 
 export enum EMetasEventsNames{
     onDeleteMeta = 'deleteMeta',
@@ -45,12 +62,7 @@ interface IMetasEvents{
 }
 
 interface MetasComponentProperties {
-    id: number,
-    nome: string,
-    descricao?: string,
-    subMetas: SubMeta[],
-    historico: string[],
-    estado: Estados,
+    meta: Meta
 
 }
 
@@ -62,6 +74,8 @@ interface MetasComponentData {
     estado: Estados,
     isEdit: boolean,
     isEditDescription: boolean,
+    isOpen: boolean,
+    qntSubMetas: number,
 }
 
 </script>
@@ -72,29 +86,33 @@ const emits = defineEmits<IMetasEvents>();
 
 const componentProperties = withDefaults(defineProps<MetasComponentProperties>(),{});
 const componentData  = reactive<MetasComponentData>({
-    nome: componentProperties.nome,
-    descricao: componentProperties.descricao,
-    subMetas: componentProperties.subMetas,
-    historico: componentProperties.historico,
-    estado: componentProperties.estado,
+    nome: componentProperties.meta.nome,
+    descricao: componentProperties.meta.descricao,
+    subMetas: componentProperties.meta.subMetas,
+    historico: componentProperties.meta.historico,
+    estado: componentProperties.meta.estado,
     isEdit: false,
     isEditDescription: false,
+    isOpen: false,
+    qntSubMetas: componentProperties.meta.subMetasNumber,
 });
 
 const editInput = ref(null);
 const editInputDescription = ref(null);
-const editableName = ref<string>();
+const editableName = ref<string>(componentData.nome);
+const editableDescription = ref<string>(componentData.nome);
 
 const addSubMeta = () => {
-    const numero = componentData.subMetas.length > 0 ? componentData.subMetas[componentData.subMetas.length-1].id + 1 : 1;
+    const numero = componentData.qntSubMetas;
     componentData.subMetas.push({
     id: numero,
-    nome:`SubMeta ${numero}`,
+    nome:`SubMeta ${numero+1}`,
+    indice: componentData.subMetas.length,
     estado: Estados.NaoIniciado,
     isDeleted: false
     });
-
-    componentData.historico.push(`SubMeta ${numero} criada`);
+    componentData.qntSubMetas = componentData.qntSubMetas+1;
+    componentData.historico.push(`SubMeta ${numero+1} criada`);
     updateMeta();
 
 };
@@ -113,10 +131,10 @@ const deleteSubMeta = (id:number) => {
 
 const deleteMeta = () => {
 
-    componentData.historico.push(`Meta ${componentProperties.id} deletada`);
+    componentData.historico.push(`Meta ${componentProperties.meta.id} deletada`);
     componentData.estado = Estados.Deletado;
     updateMeta();
-    emits(EMetasEventsNames.onDeleteMeta, componentProperties.id);
+    emits(EMetasEventsNames.onDeleteMeta, componentProperties.meta.id);
 
 };
 
@@ -142,27 +160,31 @@ const cancelEdit = () => {
     if(editableName.value){
 
         editableName.value = editableName.value.trim();
-        if(editableName.value != componentData.nome){
-            componentData.historico.push(`Nome da meta ${componentProperties.id} alterado de ${componentData.nome} para ${editableName.value}`);
+        if(editableName.value != componentData.nome && editableName.value != ""){
+            componentData.historico.push(`Nome da meta ${componentProperties.meta.id} alterado de ${componentData.nome} para ${editableName.value}`);
             componentData.nome = editableName.value;
+            updateMeta();
+            return
         }
     }
+    editableName.value = componentData.nome;
     
-    updateMeta();
 };
 
 const updateMeta = () =>{
 
     const updatedMeta : Meta = {
-        id: componentProperties.id,
+        id: componentProperties.meta.id,
         nome: componentData.nome,
         descricao: componentData.descricao,
         subMetas: componentData.subMetas,
         historico: componentData.historico,
         estado: componentData.estado,
         isDeleted: false,
-
+        subMetasNumber: componentData.qntSubMetas,
+        indice: componentProperties.meta.indice
     }
+
     emits(EMetasEventsNames.onUpdateMeta, updatedMeta);
 }
 
@@ -175,10 +197,10 @@ const updateSubMeta = (subMeta : SubMeta) => {
     componentData.subMetas[index] = subMeta;
     componentData.historico = [...componentData.historico, ...componentData.subMetas[index].historico!];
     componentData.subMetas[index].historico = undefined;
+    updateMeta();
 
     }
 
-    updateMeta();
 
 }
 
@@ -190,7 +212,7 @@ if(componentData.isEdit){
 }
 componentData.isEditDescription = true;
 
-editableName.value = componentData.descricao;
+editableDescription.value = componentData.descricao ?? '';
 
 nextTick(() => {
     const inputElement = editInputDescription.value;
@@ -204,24 +226,67 @@ nextTick(() => {
 const cancelEditDescription = () => {
 
 componentData.isEditDescription = false;
-if(editableName.value){
+if(editableDescription.value){
 
-    editableName.value = editableName.value.trim();
-    if(editableName.value != componentData.descricao){
+    editableDescription.value = editableDescription.value.trim();
+    if(editableDescription.value != componentData.descricao){
         if(!componentData.historico)
             componentData.historico = [];
-        componentData.historico.push(`Descrição da Submeta ${componentProperties.id} alterado de ${componentData.descricao} para ${editableName.value}`);
-        componentData.descricao = editableName.value;
+        componentData.historico.push(`Descrição da Submeta ${componentProperties.meta.id} alterado de ${componentData.descricao} para ${editableDescription.value}`);
+        componentData.descricao = editableDescription.value;
     }
 }
 updateMeta();
 };
 
 const updateEstado = (estado : Estados) => {
-  componentData.historico.push(`Estado da Meta ${componentProperties.id}: ${componentData.nome} alterado de ${componentData.estado} para ${estado}`);
+  componentData.historico.push(`Estado da Meta ${componentProperties.meta.id}: ${componentData.nome} alterado de ${componentData.estado} para ${estado}`);
   componentData.estado = estado;
   updateMeta();
 }
 
+const updatePanelState = () => {
+    componentData.isOpen = !componentData.isOpen;
+}
+
+watch( () => (componentProperties.meta), (newMeta, oldMeta) =>{
+
+    if(oldMeta != newMeta){
+
+        componentData.nome = newMeta.nome;
+        componentData.descricao = newMeta.descricao;
+        componentData.subMetas = newMeta.subMetas;
+        componentData.historico = newMeta.historico;
+        componentData.estado = newMeta.estado;
+        componentData.qntSubMetas = newMeta.subMetasNumber;
+        editableName.value = newMeta.nome;
+    }
+});
+
+const updateOrder = (event : SortableEvent) =>{
+  const { oldIndex, newIndex } = event;
+
+  if(oldIndex != newIndex){
+  const movedItem = componentData.subMetas.find(sm => sm.indice == oldIndex);
+  if(movedItem){
+  if(!movedItem.historico)
+    movedItem.historico = [];
+  movedItem.historico.push(`A SubMeta ${movedItem!.id}: ${movedItem!.nome} foi movida da posição ${oldIndex} para ${newIndex}`);
+
+  componentData.subMetas.forEach((subMeta) => {
+    if (subMeta.indice === oldIndex) {
+        subMeta.indice = newIndex;
+    } else if (subMeta.indice >= newIndex && subMeta.indice < oldIndex) {
+        subMeta.indice++;
+    } else if (subMeta.indice <= newIndex && subMeta.indice > oldIndex) {
+        subMeta.indice--;
+    }
+    
+  });
+  
+  updateMeta();
+  }
+  }
+}
 
 </script>

@@ -12,7 +12,7 @@
 
 
 <script lang = "ts">
-import {  reactive, ref, nextTick } from "vue";
+import {  reactive, ref, nextTick, watch } from "vue";
 import { Estados } from "@/enums/Estados";
 
 export enum EEstadoEventsNames{
@@ -72,6 +72,14 @@ const cancelEdit = () =>{
     componentData.isEdit = false;
     emits(EEstadoEventsNames.onUpdateEstado, componentData.estado);
 }
+
+watch( () => (componentProperties.estado), (newEstado, oldEstado) =>{
+
+  if(oldEstado != newEstado)
+    componentData.estado = newEstado;
+
+})
+
 </script>
 
 <style scoped>

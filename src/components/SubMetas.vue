@@ -16,11 +16,11 @@
 
 <script lang="ts">
 
-import {reactive, ref, nextTick} from 'vue';
+import {reactive, ref, nextTick, watch} from 'vue';
 import { Estados } from "@/enums/Estados";
 import Estado from './Estado.vue';
 
-import SubMeta from '@/interfaces/SubMeta';
+import type SubMeta from '@/interfaces/SubMeta';
 
 export enum ESubMetasEventsNames{
     onDeleteSubMeta = 'deleteSubMeta',
@@ -33,10 +33,7 @@ interface ISubMetasEvents{
 }
 
 interface SubMetasComponentProperties {
-    id: number,
-    nome: string,
-    descricao?: string,
-    estado: Estados,
+    subMeta: SubMeta
 
 }
 
@@ -55,9 +52,9 @@ interface SubMetasComponentData {
 
 const componentProperties = withDefaults(defineProps<SubMetasComponentProperties>(),{});
 const componentData = reactive<SubMetasComponentData>({
-    nome: componentProperties.nome,
-    descricao: componentProperties.descricao,
-    estado: componentProperties.estado,
+    nome: componentProperties.subMeta.nome,
+    descricao: componentProperties.subMeta.descricao,
+    estado: componentProperties.subMeta.estado,
     isEdit: false,
     isEditDescription: false,
 });
@@ -67,7 +64,7 @@ const emits = defineEmits<ISubMetasEvents>();
 const deleteSubMeta = () => {
     
     componentData.estado = Estados.Deletado;
-    emits(ESubMetasEventsNames.onDeleteSubMeta, componentProperties.id);
+    emits(ESubMetasEventsNames.onDeleteSubMeta, componentProperties.subMeta.id);
     
 };
 
@@ -104,7 +101,7 @@ const cancelEdit = () => {
         if(editableName.value != componentData.nome){
             if(!componentData.historico)
                 componentData.historico = [];
-            componentData.historico.push(`Nome da Submeta ${componentProperties.id} alterado de ${componentData.nome} para ${editableName.value}`);
+            componentData.historico.push(`Nome da Submeta ${componentProperties.subMeta.id} alterado de ${componentData.nome} para ${editableName.value}`);
             componentData.nome = editableName.value;
         }
     }
@@ -113,12 +110,13 @@ const cancelEdit = () => {
 
 const updateSubMeta = () => {
     const updatedSubMeta : SubMeta = {
-        id: componentProperties.id,
+        id: componentProperties.subMeta.id,
         nome: componentData.nome,
         descricao: componentData.descricao,
         estado: componentData.estado,
         historico: componentData.historico,
-        isDeleted: false
+        isDeleted: false,
+        indice: componentProperties.subMeta.indice,
     }
 
     emits(ESubMetasEventsNames.onUpdateSubMeta, updatedSubMeta);
@@ -153,7 +151,7 @@ const cancelEditDescription = () => {
         if(editableName.value != componentData.descricao){
             if(!componentData.historico)
                 componentData.historico = [];
-            componentData.historico.push(`Descrição da Submeta ${componentProperties.id} alterado de ${componentData.descricao} para ${editableName.value}`);
+            componentData.historico.push(`Descrição da Submeta ${componentProperties.subMeta.id} alterado de ${componentData.descricao} para ${editableName.value}`);
             componentData.descricao = editableName.value;
         }
     }
@@ -163,10 +161,23 @@ const cancelEditDescription = () => {
 const updateEstado = (estado : Estados) => {
   if(!componentData.historico)
     componentData.historico = [];
-  componentData.historico.push(`Estado da SubMeta ${componentProperties.id}: ${componentData.nome} alterado de ${componentData.estado} para ${estado}`);
+  componentData.historico.push(`Estado da SubMeta ${componentProperties.subMeta.id}: ${componentData.nome} alterado de ${componentData.estado} para ${estado}`);
   componentData.estado = estado;
   updateSubMeta();
 }
+
+watch(() => (componentProperties.subMeta), (newSubMeta, oldSubMeta) =>{
+
+
+    if(newSubMeta != oldSubMeta){
+
+    componentData.nome = newSubMeta.nome;
+    componentData.descricao = newSubMeta.descricao;
+    componentData.historico = newSubMeta.historico;
+    componentData.estado = newSubMeta.estado;
+    editableName.value = newSubMeta.nome;
+    }
+});
 
 
 </script>
