@@ -25,7 +25,7 @@
             <v-btn prepend-icon="mdi-delete" color="white" @click="deleteMeta" elevated>
                 Deletar Meta
             </v-btn>
-            <v-dialog max-width="800">
+      <v-dialog max-width="800">
       <template v-slot:activator="{ props: activatorProps }">
         <v-btn
             prepend-icon="mdi-history"

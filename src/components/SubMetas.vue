@@ -9,7 +9,7 @@
             <h4 @click="changeDescription" v-if="!componentData.isEditDescription"> {{ componentData.descricao ?? 'Descrição'}} </h4>
             <input v-else ref="editInputDescription" v-model="editableName" @blur="cancelEditDescription">
             <v-btn prepend-icon="mdi-delete" color="white" @click="deleteSubMeta" elevated>
-                Deletar Meta
+                Deletar SubMeta
             </v-btn>
         </div>
     </div>
