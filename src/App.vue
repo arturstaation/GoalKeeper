@@ -1,5 +1,7 @@
 <template>
-  <button :onclick="addMeta">Adicionar Meta</button>
+  <v-btn prepend-icon="mdi-plus" color="white" @click="addMeta" elevated>
+  Adicionar Meta
+  </v-btn>
   <div v-if="metasList.length > 0">
     <draggable v-model="metasList" tag="ol" itemKey="indice" @end="updateOrder">
       <template #item="{element: m}"> 

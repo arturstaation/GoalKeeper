@@ -1,7 +1,7 @@
 <template>
     <v-expansion-panels>
         <v-expansion-panel>
-            <v-expansion-panel-title @change="updatePanelState">
+            <v-expansion-panel-title>
                 <div class="d-flex align-center justify-space-between w-100">
                         {{ editableName }}
                         <Estado :estado="componentData.estado" readonly></Estado>
