@@ -37,7 +37,7 @@ Sobe as mudanças para a branch principal<br>
 Depois executa esses comandos:<br>
 npm run build<br>
 git add dist -f<br>
-git commit -am "mensagem"<br>
+git commit -am "atualizando gh-pages"<br>
 git push origin --delete gh-pages<br>
 git subtree push --prefix dist origin gh-pages<br>
 
