@@ -8,9 +8,13 @@ pnpm-debug.log*
 lerna-debug.log*
 vite.config.ts.timestamp*
 
+#Folders
 node_modules
 .DS_Store
+.vscode
+.vscode/
 dist
+dist/
 dist-ssr
 coverage
 *.local
