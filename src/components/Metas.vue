@@ -5,7 +5,6 @@
                 <div class="d-flex align-center justify-space-between w-100">
                         {{ editableName }}
                         <Estado :estado="componentData.estado" readonly></Estado>
-                    <v-icon>{{ componentData.isOpen ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
                 </div>
             </v-expansion-panel-title>
     <v-expansion-panel-text>
@@ -20,8 +19,32 @@
             </div>
             <h3 @click="changeDescription" v-if="!componentData.isEditDescription"> {{ componentData.descricao ?? 'Descrição'}} </h3>
             <input v-else ref="editInputDescription" v-model="editableDescription" @blur="cancelEditDescription">
-            <button :onclick="addSubMeta">Adicionar SubMeta</button>
-            <button :onclick="deleteMeta">Deletar Meta</button>
+            <v-btn prepend-icon="mdi-plus" color="white" @click="addSubMeta" elevated>
+                Adicionar SubMeta
+            </v-btn>
+            <v-btn prepend-icon="mdi-delete" color="white" @click="deleteMeta" elevated>
+                Deletar Meta
+            </v-btn>
+            <v-dialog max-width="800">
+      <template v-slot:activator="{ props: activatorProps }">
+        <v-btn
+            prepend-icon="mdi-history"
+          v-bind="activatorProps"
+          text="Ver Historico"
+        ></v-btn>
+      </template>
+
+      <template v-slot:default="{ isActive }">
+        <v-card :title="`Histórico da Meta ${componentProperties.meta.id}: ${componentData.nome}`">
+          <template v-slot:text>
+            <div v-for="(h, index) in componentData.historico" :key="index">
+                <p>{{ h }}</p>
+            </div>
+
+          </template>
+        </v-card>
+      </template>
+    </v-dialog>
         </div>
         <div>
 
@@ -74,7 +97,6 @@ interface MetasComponentData {
     estado: Estados,
     isEdit: boolean,
     isEditDescription: boolean,
-    isOpen: boolean,
     qntSubMetas: number,
 }
 
@@ -93,7 +115,6 @@ const componentData  = reactive<MetasComponentData>({
     estado: componentProperties.meta.estado,
     isEdit: false,
     isEditDescription: false,
-    isOpen: false,
     qntSubMetas: componentProperties.meta.subMetasNumber,
 });
 
@@ -105,14 +126,14 @@ const editableDescription = ref<string>(componentData.nome);
 const addSubMeta = () => {
     const numero = componentData.qntSubMetas;
     componentData.subMetas.push({
-    id: numero,
+    id: numero+1,
     nome:`SubMeta ${numero+1}`,
     indice: componentData.subMetas.length,
     estado: Estados.NaoIniciado,
     isDeleted: false
     });
     componentData.qntSubMetas = componentData.qntSubMetas+1;
-    componentData.historico.push(`SubMeta ${numero+1} criada`);
+    componentData.historico.push(`[${new Date().toLocaleString()}] - SubMeta ${numero+1} criada`);
     updateMeta();
 
 };
@@ -124,14 +145,14 @@ const deleteSubMeta = (id:number) => {
         componentData.subMetas[index].isDeleted = true;
     }
 
-    componentData.historico.push(`SubMeta ${index} deletada`);
+    componentData.historico.push(`[${new Date().toLocaleString()}] - SubMeta ${id}: ${componentData.subMetas[index].nome}  deletada`);
     updateMeta();
 
 };
 
 const deleteMeta = () => {
 
-    componentData.historico.push(`Meta ${componentProperties.meta.id} deletada`);
+    componentData.historico.push(`[${new Date().toLocaleString()}] - Meta ${componentProperties.meta.id}: ${componentData.nome} deletada`);
     componentData.estado = Estados.Deletado;
     updateMeta();
     emits(EMetasEventsNames.onDeleteMeta, componentProperties.meta.id);
@@ -161,7 +182,7 @@ const cancelEdit = () => {
 
         editableName.value = editableName.value.trim();
         if(editableName.value != componentData.nome && editableName.value != ""){
-            componentData.historico.push(`Nome da meta ${componentProperties.meta.id} alterado de ${componentData.nome} para ${editableName.value}`);
+            componentData.historico.push(`[${new Date().toLocaleString()}] - Nome da meta ${componentProperties.meta.id} alterado de ${componentData.nome} para ${editableName.value}`);
             componentData.nome = editableName.value;
             updateMeta();
             return
@@ -232,7 +253,7 @@ if(editableDescription.value){
     if(editableDescription.value != componentData.descricao){
         if(!componentData.historico)
             componentData.historico = [];
-        componentData.historico.push(`Descrição da Submeta ${componentProperties.meta.id} alterado de ${componentData.descricao} para ${editableDescription.value}`);
+        componentData.historico.push(`[${new Date().toLocaleString()}] - Descrição da Meta ${componentProperties.meta.id}: ${componentData.nome} alterado de ${componentData.descricao} para ${editableDescription.value}`);
         componentData.descricao = editableDescription.value;
     }
 }
@@ -240,13 +261,9 @@ updateMeta();
 };
 
 const updateEstado = (estado : Estados) => {
-  componentData.historico.push(`Estado da Meta ${componentProperties.meta.id}: ${componentData.nome} alterado de ${componentData.estado} para ${estado}`);
+  componentData.historico.push(`[${new Date().toLocaleString()}] - Estado da Meta ${componentProperties.meta.id}: ${componentData.nome} alterado de ${componentData.estado} para ${estado}`);
   componentData.estado = estado;
   updateMeta();
-}
-
-const updatePanelState = () => {
-    componentData.isOpen = !componentData.isOpen;
 }
 
 watch( () => (componentProperties.meta), (newMeta, oldMeta) =>{
@@ -271,7 +288,7 @@ const updateOrder = (event : SortableEvent) =>{
   if(movedItem){
   if(!movedItem.historico)
     movedItem.historico = [];
-  movedItem.historico.push(`A SubMeta ${movedItem!.id}: ${movedItem!.nome} foi movida da posição ${oldIndex} para ${newIndex}`);
+  movedItem.historico.push(`[${new Date().toLocaleString()}] - A SubMeta ${movedItem!.id}: ${movedItem!.nome} foi movida da posição ${oldIndex} para ${newIndex}`);
 
   componentData.subMetas.forEach((subMeta) => {
     if (subMeta.indice === oldIndex) {
@@ -287,6 +304,10 @@ const updateOrder = (event : SortableEvent) =>{
   updateMeta();
   }
   }
+}
+
+const verHistorio = () =>{
+    console.log(componentData.historico);
 }
 
 </script>

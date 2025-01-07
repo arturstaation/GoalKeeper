@@ -8,7 +8,9 @@
             </div>
             <h4 @click="changeDescription" v-if="!componentData.isEditDescription"> {{ componentData.descricao ?? 'Descrição'}} </h4>
             <input v-else ref="editInputDescription" v-model="editableName" @blur="cancelEditDescription">
-            <button :onclick="deleteSubMeta">Deletar SubMeta</button>
+            <v-btn prepend-icon="mdi-delete" color="white" @click="deleteSubMeta" elevated>
+                Deletar Meta
+            </v-btn>
         </div>
     </div>
     
@@ -101,7 +103,7 @@ const cancelEdit = () => {
         if(editableName.value != componentData.nome){
             if(!componentData.historico)
                 componentData.historico = [];
-            componentData.historico.push(`Nome da Submeta ${componentProperties.subMeta.id} alterado de ${componentData.nome} para ${editableName.value}`);
+            componentData.historico.push(`[${new Date().toLocaleString()}] - Nome da Submeta ${componentProperties.subMeta.id} alterado de ${componentData.nome} para ${editableName.value}`);
             componentData.nome = editableName.value;
         }
     }
@@ -151,7 +153,7 @@ const cancelEditDescription = () => {
         if(editableName.value != componentData.descricao){
             if(!componentData.historico)
                 componentData.historico = [];
-            componentData.historico.push(`Descrição da Submeta ${componentProperties.subMeta.id} alterado de ${componentData.descricao} para ${editableName.value}`);
+            componentData.historico.push(`[${new Date().toLocaleString()}] - Descrição da Submeta ${componentProperties.subMeta.id}: ${componentData.nome} alterado de ${componentData.descricao} para ${editableName.value}`);
             componentData.descricao = editableName.value;
         }
     }
@@ -161,7 +163,7 @@ const cancelEditDescription = () => {
 const updateEstado = (estado : Estados) => {
   if(!componentData.historico)
     componentData.historico = [];
-  componentData.historico.push(`Estado da SubMeta ${componentProperties.subMeta.id}: ${componentData.nome} alterado de ${componentData.estado} para ${estado}`);
+  componentData.historico.push(`[${new Date().toLocaleString()}] - Estado da SubMeta ${componentProperties.subMeta.id}: ${componentData.nome} alterado de ${componentData.estado} para ${estado}`);
   componentData.estado = estado;
   updateSubMeta();
 }

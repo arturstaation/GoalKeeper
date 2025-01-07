@@ -62,7 +62,7 @@ const addMeta = () =>{
     isDeleted: false,
     indice: metasList.value.length
   };
-  newMeta.historico.push(`Meta ${numero+1} criada`);
+  newMeta.historico.push(`[${new Date().toLocaleString()}] - Meta ${numero+1} criada`);
   metasList.value.push(newMeta);
 
   
@@ -108,7 +108,7 @@ const updateOrder = (event : SortableEvent) =>{
   if(movedItem){
   if(!movedItem.historico)
     movedItem.historico = [];
-  movedItem.historico.push(`A Meta ${movedItem!.id}: ${movedItem!.nome} foi movida da posição ${oldIndex} para ${newIndex}`);
+  movedItem.historico.push(`[${new Date().toLocaleString()}] - A Meta ${movedItem!.id}: ${movedItem!.nome} foi movida da posição ${oldIndex} para ${newIndex}`);
 
   metasList.value.forEach((meta) => {
     if (meta.indice === oldIndex) {
