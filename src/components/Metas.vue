@@ -132,11 +132,11 @@ const dialogMessage = ref<string>();
 
 const addSubMeta = () => {
     const numero = componentData.qntSubMetas;
-    componentData.subMetas.push({
-    id: numero+1,
-    nome:`SubMeta ${numero+1}`,
-    estado: Estados.NaoIniciado,
-    isDeleted: false
+        componentData.subMetas.push({
+        id: numero+1,
+        nome:`SubMeta ${numero+1}`,
+        estado: Estados.NaoIniciado,
+        isDeleted: false
     });
     componentData.qntSubMetas = componentData.qntSubMetas+1;
     componentData.historico.push(`[${new Date().toLocaleString()}] - SubMeta ${numero+1} criada`);
@@ -231,10 +231,10 @@ const updateSubMeta = (subMeta : SubMeta) => {
     
     if(index !== -1){
 
-    componentData.subMetas[index] = subMeta;
-    componentData.historico = [...componentData.historico, ...componentData.subMetas[index].historico!];
-    componentData.subMetas[index].historico = undefined;
-    updateMeta();
+        componentData.subMetas[index] = subMeta;
+        componentData.historico = [...componentData.historico, ...componentData.subMetas[index].historico!];
+        componentData.subMetas[index].historico = undefined;
+        updateMeta();
 
     }
 
@@ -254,7 +254,7 @@ const changeDescription = () =>{
     nextTick(() => {
         const inputElement = editInputDescription.value;
         if (inputElement) {
-        inputElement.focus(); 
+            inputElement.focus(); 
         }
     });
 
@@ -300,15 +300,15 @@ const updateOrder = (event : SortableEvent) =>{
   const { oldIndex, newIndex } = event;
 
   if(oldIndex != newIndex){
-  const movedItem = componentData.subMetas[oldIndex];
-  if(movedItem){
-  if(!movedItem.historico)
-    movedItem.historico = [];
-  movedItem.historico.push(`[${new Date().toLocaleString()}] - A SubMeta ${movedItem!.id}: ${movedItem!.nome} foi movida da posição ${oldIndex} para ${newIndex}`);
+    const movedItem = componentData.subMetas[oldIndex];
+    if(movedItem){
+        if(!movedItem.historico)
+            movedItem.historico = [];
+        movedItem.historico.push(`[${new Date().toLocaleString()}] - A SubMeta ${movedItem!.id}: ${movedItem!.nome} foi movida da posição ${oldIndex} para ${newIndex}`);
 
-  
-  updateMeta();
-  }
+        
+        updateMeta();
+    }
   }
 }
  

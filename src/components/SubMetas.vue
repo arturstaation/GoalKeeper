@@ -137,7 +137,7 @@ const changeDescription = () =>{
     nextTick(() => {
         const inputElement = editInputDescription.value;
         if (inputElement) {
-        inputElement.focus(); 
+            inputElement.focus(); 
         }
     });
 
@@ -177,7 +177,7 @@ watch(() => (componentProperties.subMeta), (newSubMeta, oldSubMeta) =>{
         componentData.historico = newSubMeta.historico;
         componentData.estado = newSubMeta.estado;
         editableName.value = newSubMeta.nome;
-        
+
     }
 });
 
