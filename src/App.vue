@@ -33,7 +33,7 @@
       Resetar Metas
     </v-btn>
   
-  <div v-if="metasList.length > 0">
+  <div v-if="hasSomeUnFinishedValue">
     <h1>Metas em Aberto</h1>
     <draggable v-model="metasList" tag="ol" itemKey="indice" @end="updateOrder">
       <template #item="{element: m}"> 
@@ -76,11 +76,16 @@ const hasSomeFinished = () : boolean =>{
     return true;
   return false;
 }
+const hasSomeUnFinished = () : boolean =>{
+  if(metasList.value.some(m => (m.estado != Estados.Finalizado && m.estado != Estados.Aboratdo) && m.isDeleted == false))
+    return true;
+  return false;
+}
 
 const metasList = ref<Meta[]>([]);
 const metasQnt = ref<number>(0);
 const hasSomeFinishedValue = ref<boolean>(false);
-
+const hasSomeUnFinishedValue = ref<boolean>(false);
 
 onMounted(() => {
   const metasSalvas = localStorage.getItem('metas');
@@ -101,6 +106,7 @@ onMounted(() => {
   localStorage.setItem('metas', JSON.stringify(metasList.value));
   localStorage.setItem('metasQnt', JSON.stringify(metasQnt.value));
   hasSomeFinishedValue.value = hasSomeFinished();
+  hasSomeUnFinishedValue.value = hasSomeUnFinished();
 });
 
 const addMeta = () =>{
@@ -124,6 +130,7 @@ const addMeta = () =>{
 
   localStorage.setItem('metas', JSON.stringify(metasList.value));
   localStorage.setItem('metasQnt', JSON.stringify(metasQnt.value));
+  hasSomeUnFinishedValue.value = hasSomeUnFinished();
 };
 
 const deleteMeta = (id: number) =>{
@@ -142,6 +149,7 @@ const deleteMeta = (id: number) =>{
 
   localStorage.setItem('metas', JSON.stringify(metasList.value));
   hasSomeFinishedValue.value = hasSomeFinished();
+  hasSomeUnFinishedValue.value = hasSomeUnFinished();
 };
 
 const updateMeta = (meta: Meta) =>{
@@ -154,6 +162,7 @@ if (index !== -1) {
 
 localStorage.setItem('metas', JSON.stringify(metasList.value));
 hasSomeFinishedValue.value = hasSomeFinished();
+hasSomeUnFinishedValue.value = hasSomeUnFinished();
 };
 
 const updateOrder = (event : SortableEvent) =>{
@@ -180,6 +189,7 @@ const updateOrder = (event : SortableEvent) =>{
 
   localStorage.setItem('metas', JSON.stringify(metasList.value));
   hasSomeFinishedValue.value = hasSomeFinished();
+  hasSomeUnFinishedValue.value = hasSomeUnFinished();
   }
   }
 }
@@ -200,6 +210,7 @@ const recoverMeta = (m : Meta) => {
   metasList.value.splice(lastItemIndex + 1, 0, recortado);
   
   localStorage.setItem('metas', JSON.stringify(metasList.value));
+  hasSomeUnFinishedValue.value = hasSomeUnFinished();
   
 }
 
@@ -211,6 +222,7 @@ const resetData = () => {
   localStorage.setItem('metas', JSON.stringify(metasList.value));
   localStorage.setItem('metasQnt', JSON.stringify(metasQnt.value));
   hasSomeFinishedValue.value = hasSomeFinished();
+  hasSomeUnFinishedValue.value = hasSomeUnFinished();
 }
 
 

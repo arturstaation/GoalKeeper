@@ -22,7 +22,7 @@
             <v-btn prepend-icon="mdi-plus" color="white" @click="addSubMeta" elevated>
                 Adicionar SubMeta
             </v-btn>
-            <v-btn prepend-icon="mdi-delete" color="white" @click="deleteMeta" elevated>
+            <v-btn prepend-icon="mdi-delete" color="white" @click="confirmDeletion" elevated>
                 Deletar Meta
             </v-btn>
       <v-dialog max-width="800">
@@ -58,6 +58,8 @@
     </div>
              
     </div>
+
+    <ConfirmDialog v-if="componentData.openConfirmationDialog" :title="dialogTitle" :message="dialogMessage" :is-open="componentData.openConfirmationDialog" @update-response="deleteMeta"></ConfirmDialog>
 </v-expansion-panel-text>
 </v-expansion-panel>
 </v-expansion-panels>
@@ -73,6 +75,7 @@ import SubMetas from './SubMetas.vue';
 import Estado from './Estado.vue';
 import { Estados } from "@/enums/Estados";
 import type { SortableEvent } from "sortablejs"
+import ConfirmDialog from "./ConfirmDialog.vue";
 
 export enum EMetasEventsNames{
     onDeleteMeta = 'deleteMeta',
@@ -98,6 +101,7 @@ interface MetasComponentData {
     isEdit: boolean,
     isEditDescription: boolean,
     qntSubMetas: number,
+    openConfirmationDialog: boolean,
 }
 
 </script>
@@ -116,12 +120,15 @@ const componentData  = reactive<MetasComponentData>({
     isEdit: false,
     isEditDescription: false,
     qntSubMetas: componentProperties.meta.subMetasNumber,
+    openConfirmationDialog: false,
 });
 
 const editInput = ref(null);
 const editInputDescription = ref(null);
 const editableName = ref<string>(componentData.nome);
 const editableDescription = ref<string>(componentData.nome);
+const dialogTitle = ref<string>();
+const dialogMessage = ref<string>();
 
 const addSubMeta = () => {
     const numero = componentData.qntSubMetas;
@@ -143,19 +150,30 @@ const deleteSubMeta = (id:number) => {
 
     if (index !== -1) {
         componentData.subMetas[index].isDeleted = true;
+        componentData.historico.push(`[${new Date().toLocaleString()}] - SubMeta ${id}: ${componentData.subMetas[index].nome}  deletada`);
     }
 
-    componentData.historico.push(`[${new Date().toLocaleString()}] - SubMeta ${id}: ${componentData.subMetas[index].nome}  deletada`);
     updateMeta();
 
 };
 
-const deleteMeta = () => {
+const confirmDeletion = () => {
+    componentData.openConfirmationDialog = true;
+    
+    dialogMessage.value = `Tem certeza que deseja deletar a Meta : ${componentData.nome}?`
+    dialogTitle.value = `Deletar Meta ${componentData.nome}`
+}
 
-    componentData.historico.push(`[${new Date().toLocaleString()}] - Meta ${componentProperties.meta.id}: ${componentData.nome} deletada`);
-    componentData.estado = Estados.Deletado;
-    updateMeta();
-    emits(EMetasEventsNames.onDeleteMeta, componentProperties.meta.id);
+const deleteMeta = (answer : boolean) => {
+
+    if(answer){
+        componentData.historico.push(`[${new Date().toLocaleString()}] - Meta ${componentProperties.meta.id}: ${componentData.nome} deletada`);
+        componentData.estado = Estados.Deletado;
+        updateMeta();
+        emits(EMetasEventsNames.onDeleteMeta, componentProperties.meta.id);
+    }
+    
+    componentData.openConfirmationDialog = false;
 
 };
 
