@@ -1,34 +1,34 @@
 <template>
-<div>
     <div>
-        <v-dialog max-width="800">
-            <template v-slot:activator="{ props: activatorProps }">
-            <v-btn
-                prepend-icon="mdi-cancel"
-                v-bind="activatorProps"
-                text="Metas Removidas"
-            ></v-btn>
-            </template>
-
-            <template v-slot:default="{ isActive }">
-            <v-card title="Metas Removidas">
-                <template v-slot:text>
-                <div v-for="(m, index) in componentProperties.metas" :key="index">
-                    <div v-if="m.estado == Estados.Deletado">
-                    <p>{{ m.nome }}</p>
-                    <v-btn prepend-icon="mdi-plus" color="white" @click="confirmRecoverMeta(m)" elevated>
-                    Recuperar Meta
-                    </v-btn>
-                    </div>
-                </div>
-
+        <div>
+            <v-dialog max-width="800">
+                <template v-slot:activator="{ props: activatorProps }">
+                <v-btn
+                    prepend-icon="mdi-cancel"
+                    v-bind="activatorProps"
+                    text="Metas Removidas"
+                ></v-btn>
                 </template>
-            </v-card>
-            </template>
-        </v-dialog>
+
+                <template v-slot:default="{ isActive }">
+                <v-card title="Metas Removidas">
+                    <template v-slot:text>
+                    <div v-for="(m, index) in componentProperties.metas" :key="index">
+                        <div v-if="m.estado == Estados.Deletado">
+                        <p>{{ m.nome }}</p>
+                        <v-btn prepend-icon="mdi-plus" color="white" @click="confirmRecoverMeta(m)" elevated>
+                        Recuperar Meta
+                        </v-btn>
+                        </div>
+                    </div>
+
+                    </template>
+                </v-card>
+                </template>
+            </v-dialog>
+        </div>
+        <ConfirmDialog v-if="componentData.isOpen" :title="componentData.dialogTitle" :message="componentData.dialogMessage" :is-open="componentData.isOpen" @update-response="recoverMeta"></ConfirmDialog>
     </div>
-  <ConfirmDialog v-if="componentData.isOpen" :title="componentData.dialogTitle" :message="componentData.dialogMessage" :is-open="componentData.isOpen" @update-response="recoverMeta"></ConfirmDialog>
-</div>
 </template>
 
 <script lang = "ts">

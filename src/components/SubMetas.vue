@@ -2,9 +2,9 @@
     <div>
         <div>
             <div>
-            <h2 v-if="!componentData.isEdit" @click="changeName"> {{ componentData.nome }} </h2>
-            <input v-else ref="editInput" v-model="editableName" @blur="cancelEdit">
-            <Estado :estado="componentData.estado" @update-estado="updateEstado"></Estado>
+                <h2 v-if="!componentData.isEdit" @click="changeName"> {{ componentData.nome }} </h2>
+                <input v-else ref="editInput" v-model="editableName" @blur="cancelEdit">
+                <Estado :estado="componentData.estado" @update-estado="updateEstado"></Estado>
             </div>
             <h4 @click="changeDescription" v-if="!componentData.isEditDescription"> {{ componentData.descricao ?? 'Descrição'}} </h4>
             <input v-else ref="editInputDescription" v-model="editableName" @blur="cancelEditDescription">
@@ -118,7 +118,6 @@ const updateSubMeta = () => {
         estado: componentData.estado,
         historico: componentData.historico,
         isDeleted: false,
-        indice: componentProperties.subMeta.indice,
     }
 
     emits(ESubMetasEventsNames.onUpdateSubMeta, updatedSubMeta);
@@ -161,11 +160,11 @@ const cancelEditDescription = () => {
 };
 
 const updateEstado = (estado : Estados) => {
-  if(!componentData.historico)
-    componentData.historico = [];
-  componentData.historico.push(`[${new Date().toLocaleString()}] - Estado da SubMeta ${componentProperties.subMeta.id}: ${componentData.nome} alterado de ${componentData.estado} para ${estado}`);
-  componentData.estado = estado;
-  updateSubMeta();
+    if(!componentData.historico)
+        componentData.historico = [];
+    componentData.historico.push(`[${new Date().toLocaleString()}] - Estado da SubMeta ${componentProperties.subMeta.id}: ${componentData.nome} alterado de ${componentData.estado} para ${estado}`);
+    componentData.estado = estado;
+    updateSubMeta();
 }
 
 watch(() => (componentProperties.subMeta), (newSubMeta, oldSubMeta) =>{
@@ -173,11 +172,12 @@ watch(() => (componentProperties.subMeta), (newSubMeta, oldSubMeta) =>{
 
     if(newSubMeta != oldSubMeta){
 
-    componentData.nome = newSubMeta.nome;
-    componentData.descricao = newSubMeta.descricao;
-    componentData.historico = newSubMeta.historico;
-    componentData.estado = newSubMeta.estado;
-    editableName.value = newSubMeta.nome;
+        componentData.nome = newSubMeta.nome;
+        componentData.descricao = newSubMeta.descricao;
+        componentData.historico = newSubMeta.historico;
+        componentData.estado = newSubMeta.estado;
+        editableName.value = newSubMeta.nome;
+        
     }
 });
 

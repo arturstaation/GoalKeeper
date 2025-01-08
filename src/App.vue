@@ -5,7 +5,7 @@
     Adicionar Meta
     </v-btn>
 
-    <RecuperarMetas :metas="metasList" @recuperar-meta="teste"></RecuperarMetas>
+    <RecuperarMetas :metas="metasList" @recuperar-meta="recoverMeta"></RecuperarMetas>
 
     <v-btn prepend-icon="mdi-restart" color="white" @click="resetData" elevated>
       Resetar Metas
@@ -13,26 +13,26 @@
   </div>
   
   <div v-if="hasSomeUnFinishedValue">
-    <h1>Metas em Aberto</h1>
-    <draggable v-model="metasList" tag="ol" itemKey="indice" @end="updateOrder">
-      <template #item="{element: m}"> 
-        <li :key="m.id" v-if="!m.isDeleted && (m.estado != Estados.Finalizado && m.estado != Estados.Aboratdo)">
-        <Metas :meta="m" @delete-meta="deleteMeta" @update-meta="updateMeta"></Metas>
-        </li>
-      </template>
-    </draggable>
+      <h1>Metas em Aberto</h1>
+      <draggable v-model="metasList" tag="ol" itemKey="id" @end="updateOrder">
+        <template #item="{element: m}"> 
+          <li :key="m.id" v-if="!m.isDeleted && (m.estado != Estados.Finalizado && m.estado != Estados.Aboratdo)">
+          <Metas :meta="m" @delete-meta="deleteMeta" @update-meta="updateMeta"></Metas>
+          </li>
+        </template>
+      </draggable>
     </div>
 
   
     <div v-if="hasSomeFinishedValue">
-    <h1>Metas Finalizadas</h1>
-    <draggable v-model="metasList" tag="ol" itemKey="indice" @end="updateOrder">
-      <template #item="{element: m}"> 
-        <li :key="m.id" v-if="!m.isDeleted && (m.estado == Estados.Finalizado || m.estado == Estados.Aboratdo)">
-        <Metas :meta="m" @delete-meta="deleteMeta" @update-meta="updateMeta"></Metas>
-        </li>
-      </template>
-    </draggable>
+      <h1>Metas Finalizadas</h1>
+      <draggable v-model="metasList" tag="ol" itemKey="id" @end="updateOrder">
+        <template #item="{element: m}"> 
+          <li :key="m.id" v-if="!m.isDeleted && (m.estado == Estados.Finalizado || m.estado == Estados.Aboratdo)">
+          <Metas :meta="m" @delete-meta="deleteMeta" @update-meta="updateMeta"></Metas>
+          </li>
+        </template>
+      </draggable>
     </div>
   
 </template>
@@ -100,7 +100,6 @@ const addMeta = () =>{
     historico: [] as string[],
     estado: Estados.NaoIniciado,
     isDeleted: false,
-    indice: metasList.value.length
   };
   newMeta.historico.push(`[${new Date().toLocaleString()}] - Meta ${numero+1} criada`);
   metasList.value.push(newMeta);
@@ -119,12 +118,6 @@ const deleteMeta = (id: number) =>{
 
   if (index !== -1) {
     metasList.value[index].isDeleted = true;
-    const indice = metasList.value[index].indice;
-    metasList.value.forEach(m =>{
-      if(m.indice > indice)
-      m.indice = m.indice-1;
-  })
-  metasList.value[index].indice = -1;
   }
 
   localStorage.setItem('metas', JSON.stringify(metasList.value));
@@ -134,63 +127,53 @@ const deleteMeta = (id: number) =>{
 
 const updateMeta = (meta: Meta) =>{
 
-const index = metasList.value.findIndex((m : Meta) => m.id === meta.id);
+  const index = metasList.value.findIndex((m : Meta) => m.id === meta.id);
 
-if (index !== -1) {
-  metasList.value[index] = meta;
-}
-
-localStorage.setItem('metas', JSON.stringify(metasList.value));
-hasSomeFinishedValue.value = hasSomeFinished();
-hasSomeUnFinishedValue.value = hasSomeUnFinished();
-};
-
-const updateOrder = (event : SortableEvent) =>{
-  const { oldIndex, newIndex } = event;
-
-  if(oldIndex != newIndex){
-  const movedItem = metasList.value.find(m => m.indice == oldIndex);
-  if(movedItem){
-  if(!movedItem.historico)
-    movedItem.historico = [];
-  movedItem.historico.push(`[${new Date().toLocaleString()}] - A Meta ${movedItem!.id}: ${movedItem!.nome} foi movida da posição ${oldIndex} para ${newIndex}`);
-
-  metasList.value.forEach((meta) => {
-    if (meta.indice === oldIndex) {
-      meta.indice = newIndex;
-    } else if (meta.indice >= newIndex && meta.indice < oldIndex) {
-      meta.indice++;
-    } else if (meta.indice <= newIndex && meta.indice > oldIndex) {
-      meta.indice--;
-    }
-    
-  });
-  
+  if (index !== -1) {
+    metasList.value[index] = meta;
+  }
 
   localStorage.setItem('metas', JSON.stringify(metasList.value));
   hasSomeFinishedValue.value = hasSomeFinished();
   hasSomeUnFinishedValue.value = hasSomeUnFinished();
-  }
-  }
+  };
+
+  const updateOrder = (event : SortableEvent) =>{
+    const { oldIndex, newIndex } = event;
+
+    if(oldIndex != newIndex){
+    const movedItem = metasList.value[oldIndex]
+    if(movedItem){
+    if(!movedItem.historico)
+      movedItem.historico = [];
+    movedItem.historico.push(`[${new Date().toLocaleString()}] - A Meta ${movedItem!.id}: ${movedItem!.nome} foi movida da posição ${oldIndex} para ${newIndex}`);
+
+    
+
+    localStorage.setItem('metas', JSON.stringify(metasList.value));
+    hasSomeFinishedValue.value = hasSomeFinished();
+    hasSomeUnFinishedValue.value = hasSomeUnFinished();
+    }
+    }
 }
 
-const teste = (m : Meta) => {
+const recoverMeta = (m : Meta) => {
 
-  const ultimoIndice = Math.max(...metasList.value.map(m => m.indice));
   
-  const lastItemIndex = metasList.value.findIndex((meta : Meta) => meta.indice == ultimoIndice);
   const currentItemIndex = metasList.value.findIndex((meta : Meta) => meta.id == m.id);
+
   m.estado = Estados.NaoIniciado;
   m.isDeleted = false;
-  m.indice = ultimoIndice+1;
   m.historico.push(`[${new Date().toLocaleString()}] - A Meta ${m.id}: ${m.nome} foi recuperada após ser removida`);
   
-  const [recortado] = metasList.value.splice(currentItemIndex, 1);
+  if (currentItemIndex !== -1) {
 
-  metasList.value.splice(lastItemIndex + 1, 0, recortado);
-  
-  localStorage.setItem('metas', JSON.stringify(metasList.value));
-  hasSomeUnFinishedValue.value = hasSomeUnFinished();
+    const [recortado] = metasList.value.splice(currentItemIndex, 1);
+
+    metasList.value.push(recortado);
+
+    localStorage.setItem('metas', JSON.stringify(metasList.value));
+  }
   
 }
 

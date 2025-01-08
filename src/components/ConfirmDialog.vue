@@ -13,23 +13,23 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </template>
+</template>
 
 
 <script lang="ts">
 
 export enum EConfirmDialogEventsNames{
-    onUpdateResponse = 'updateResponse',
+  onUpdateResponse = 'updateResponse',
 }
 
 interface IConfirmDialogEvents{
-    (e: EConfirmDialogEventsNames.onUpdateResponse, Agree : boolean) : void;
+  (e: EConfirmDialogEventsNames.onUpdateResponse, Agree : boolean) : void;
 }
 
 interface ConfirmDialogComponentProperties {
-    title?: string,
-    message?: string,
-    isOpen: boolean
+  title?: string,
+  message?: string,
+  isOpen: boolean
 }
 
 
@@ -39,9 +39,6 @@ interface ConfirmDialogComponentProperties {
 
 
 <script lang="ts" setup>
-import { watch } from 'vue';
-
-
 
 
 const componentProperties = withDefaults(defineProps<ConfirmDialogComponentProperties>(),{});
@@ -49,7 +46,8 @@ const emits = defineEmits<IConfirmDialogEvents>();
 
 const emitAnswer = (answer : boolean) => {
 
-    emits(EConfirmDialogEventsNames.onUpdateResponse, answer);
+  emits(EConfirmDialogEventsNames.onUpdateResponse, answer);
+
 };
 
 </script>

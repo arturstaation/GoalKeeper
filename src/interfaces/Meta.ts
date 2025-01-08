@@ -3,7 +3,6 @@ import type SubMeta from "./SubMeta";
 
 export default interface Meta {
     id: number,
-    indice: number,
     subMetasNumber: number,
     nome: string,
     descricao?: string,
