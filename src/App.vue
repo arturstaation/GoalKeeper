@@ -1,37 +1,16 @@
 <template>
-  <v-btn prepend-icon="mdi-plus" color="white" @click="addMeta" elevated>
-  Adicionar Meta
-  </v-btn>
 
-  <v-dialog max-width="800">
-      <template v-slot:activator="{ props: activatorProps }">
-        <v-btn
-            prepend-icon="mdi-cancel"
-          v-bind="activatorProps"
-          text="Metas Removidas"
-        ></v-btn>
-      </template>
+  <div class = "botoes">
+    <v-btn prepend-icon="mdi-plus" color="white" @click="addMeta" elevated>
+    Adicionar Meta
+    </v-btn>
 
-      <template v-slot:default="{ isActive }">
-        <v-card title="Metas Removidas">
-          <template v-slot:text>
-            <div v-for="(m, index) in metasList" :key="index">
-              <div v-if="m.estado == Estados.Deletado">
-                <p>{{ m.nome }}</p>
-                <v-btn prepend-icon="mdi-plus" color="white" @click="recoverMeta(m)" elevated>
-                Recuperar Meta
-                </v-btn>
-              </div>
-            </div>
-
-          </template>
-        </v-card>
-      </template>
-    </v-dialog>
+    <RecuperarMetas :metas="metasList" @recuperar-meta="teste"></RecuperarMetas>
 
     <v-btn prepend-icon="mdi-restart" color="white" @click="resetData" elevated>
       Resetar Metas
     </v-btn>
+  </div>
   
   <div v-if="hasSomeUnFinishedValue">
     <h1>Metas em Aberto</h1>
@@ -66,6 +45,7 @@ import { Estados } from "@/enums/Estados";
 import Metas from './components/Metas.vue';
 import type { SortableEvent } from "sortablejs"
 import type Meta from './interfaces/Meta';
+import RecuperarMetas from "./components/RecuperarMetas.vue";
 
 </script>
 
@@ -194,7 +174,7 @@ const updateOrder = (event : SortableEvent) =>{
   }
 }
 
-const recoverMeta = (m : Meta) => {
+const teste = (m : Meta) => {
 
   const ultimoIndice = Math.max(...metasList.value.map(m => m.indice));
   

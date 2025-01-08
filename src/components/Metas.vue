@@ -323,9 +323,6 @@ const updateOrder = (event : SortableEvent) =>{
   }
   }
 }
-
-const verHistorio = () =>{
-    console.log(componentData.historico);
-}
+ 
 
 </script>
