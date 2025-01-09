@@ -20,15 +20,11 @@ li {
   display: flex;
   flex-direction: row;
   align-items: center;
-  /* Alinha o texto verticalmente no meio */
   width: 100%;
-  /* Largura total */
-  background-color: #f3f3f3;
-  /* Cor do fundo */
+  background-color: #c5c5c5;
   border-radius: 8px;
   overflow: hidden;
   height: 30px;
-  /* Altura da barra */
   margin: 10px 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -46,4 +42,74 @@ li {
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   margin-left: 10px;
   white-space: nowrap;
+}
+
+body {
+  background-color: gray;
+}
+
+.painel-texto {
+  background-color: rgb(175, 174, 174);
+}
+
+.meta-item {
+  margin-bottom: 10px;
+}
+
+.submeta-item {
+  margin-top: 10px;
+  background-color: rgb(136, 136, 136);
+  ;
+}
+
+
+.estado-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.estado-bolinha {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+}
+
+.nao-iniciado {
+  background-color: gray;
+}
+
+.em-progresso {
+  background-color: blue;
+}
+
+.finalizado {
+  background-color: green;
+}
+
+.abortado {
+  background-color: red;
+}
+
+
+.pausado {
+  background-color: orange;
+}
+
+.deletado {
+  background-color: red;
+}
+
+.estado-edit {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.metas-deletadas {
+  margin-bottom: 20px;
+}
+
+.botoes {
+  gap: 10px;
 }

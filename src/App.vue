@@ -1,26 +1,22 @@
 <template>
 
-  <div>
+  <div class = "d-flex flex-column align-center">
     <h1>GoalKepper</h1>
     <p>Seu Gerenciador de Metas</p>
+    <div class = "d-flex flex-row botoes">
+      <v-btn prepend-icon="mdi-plus" color="white" @click="addMeta" elevated>
+      Adicionar Meta
+      </v-btn>
+      <RecuperarMetas :metas="metasList" @recuperar-meta="recoverMeta"></RecuperarMetas>
+    </div>
   </div>
-  <div class = "botoes">
-    <v-btn prepend-icon="mdi-plus" color="white" @click="addMeta" elevated>
-    Adicionar Meta
-    </v-btn>
 
-    <RecuperarMetas :metas="metasList" @recuperar-meta="recoverMeta"></RecuperarMetas>
-
-    <v-btn prepend-icon="mdi-restart" color="white" @click="resetData" elevated>
-      Resetar Metas
-    </v-btn>
-  </div>
   
-  <div v-if="hasSomeUnFinishedValue">
+  <div v-if="hasSomeUnFinishedValue" class="metas">
       <h1>Metas em Aberto</h1>
       <draggable v-model="metasList" tag="ol" itemKey="id" @end="updateOrder">
         <template #item="{element: m}"> 
-          <li :key="m.id" v-if="!m.isDeleted && (m.estado != Estados.Finalizado && m.estado != Estados.Aboratdo)">
+          <li :key="m.id" v-if="!m.isDeleted && (m.estado != Estados.Finalizado && m.estado != Estados.Aboratdo)" class="meta-item">
             <Metas :meta="m" @delete-meta="deleteMeta" @update-meta="updateMeta"></Metas>
           </li>
         </template>
@@ -28,11 +24,11 @@
     </div>
 
   
-    <div v-if="hasSomeFinishedValue">
+    <div v-if="hasSomeFinishedValue" class="metas">
       <h1>Metas Finalizadas</h1>
       <draggable v-model="metasList" tag="ol" itemKey="id" @end="updateOrder">
         <template #item="{element: m}"> 
-          <li :key="m.id" v-if="!m.isDeleted && (m.estado == Estados.Finalizado || m.estado == Estados.Aboratdo)">
+          <li :key="m.id" v-if="!m.isDeleted && (m.estado == Estados.Finalizado || m.estado == Estados.Aboratdo)" class="meta-item">
             <Metas :meta="m" @delete-meta="deleteMeta" @update-meta="updateMeta" @reopen-meta="reopenMeta"></Metas>
           </li>
         </template>

@@ -2,11 +2,11 @@
     <div>
         <div>
             <div>
-                <h2 v-if="!componentData.isEdit" @click="changeName"> {{ componentData.nome }} </h2>
+                <h3 v-if="!componentData.isEdit" @click="changeName"> {{ componentData.nome }} </h3>
                 <input v-else ref="editInput" v-model="editableName" @blur="cancelEdit">
                 <Estado :estado="componentData.estado" @update-estado="updateEstado"></Estado>
             </div>
-            <h4 @click="changeDescription" v-if="!componentData.isEditDescription"> {{ componentData.descricao ?? 'Descrição'}} </h4>
+            <h5 @click="changeDescription" v-if="!componentData.isEditDescription"> {{ componentData.descricao ?? 'Descrição'}} </h5>
             <input v-else ref="editInputDescription" v-model="editableName" @blur="cancelEditDescription">
             <v-btn prepend-icon="mdi-delete" color="white" @click="deleteSubMeta" elevated>
                 Deletar SubMeta

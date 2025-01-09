@@ -4,7 +4,7 @@
             <v-expansion-panel-title>
                 <div class="d-flex flex-column w-100">
                     <div class = "d-flex flex-row justify-space-between">
-                        {{ editableName }}
+                        <h1>{{ editableName }}</h1>
                         <Estado :estado="componentData.estado" readonly></Estado>
                     </div>
                     <div class="d-flex flex-row align-center">
@@ -15,65 +15,66 @@
                     </div>
                 </div>
             </v-expansion-panel-title>
-            <v-expansion-panel-text>
+            <v-expansion-panel-text class = "painel-texto">
                 <div>
                     <div>
-                    <div>
-                        <h1 @click="changeName" v-if="!(componentData.isEdit) || (componentData.estado == Estados.Finalizado || componentData.estado == Estados.Aboratdo)">
-                            {{ editableName }}
-                        </h1>
-                        <input v-else ref="editInput" v-model="editableName" @blur="cancelEdit">
-                        <Estado :estado="componentData.estado" @update-estado="updateEstado"></Estado>
-                    </div>
-
-                    <div>
-                        <div v-if="componentData.estado != Estados.Finalizado && componentData.estado != Estados.Aboratdo">
-                            <h3 @click="changeDescription" v-if="!componentData.isEditDescription"> {{ componentData.descricao ?? 'Descrição'}} </h3>
-                            <input v-else ref="editInputDescription" v-model="editableDescription" @blur="cancelEditDescription">
-                            <v-btn prepend-icon="mdi-plus" color="white" @click="addSubMeta" elevated>
-                                Adicionar SubMeta
-                            </v-btn>
-                            <v-btn prepend-icon="mdi-delete" color="white" @click="confirmDeletion" elevated>
-                                Deletar Meta
-                            </v-btn>
+                        <div>
+                            <h2 @click="changeName" v-if="!(componentData.isEdit) || (componentData.estado == Estados.Finalizado || componentData.estado == Estados.Aboratdo)">
+                                {{ editableName }}
+                            </h2>
+                            <input v-else ref="editInput" v-model="editableName" @blur="cancelEdit">
+                            <Estado :estado="componentData.estado" @update-estado="updateEstado"></Estado>
                         </div>
-                        
-                        <div v-else>
-                            <v-btn prepend-icon="mdi-redo-variant" color="white" @click="confirmReopen" elevated>
-                                Reabrir Meta
-                            </v-btn>
-                            <ConfirmDialog v-if="componentData.openReopenConfirmationDialog" :title="dialogTitle" :message="dialogMessage" :is-open="componentData.openReopenConfirmationDialog" @update-response="reopenMeta"></ConfirmDialog>
-                        </div>
-                        <v-dialog max-width="800">
-                        <template v-slot:activator="{ props: activatorProps }">
-                        <v-btn
-                            prepend-icon="mdi-history"
-                            v-bind="activatorProps"
-                            text="Ver Historico"
-                        ></v-btn>
-                        </template>
 
-                        <template v-slot:default="{ isActive }">
-                        <v-card :title="`Histórico da Meta ${componentProperties.meta.id}: ${componentData.nome}`">
-                            <template v-slot:text>
-                            <div v-for="(h, index) in componentData.historico" :key="index">
-                                <p>{{ h }}</p>
+                        <h4 @click="changeDescription" v-if="!componentData.isEditDescription  || (componentData.estado == Estados.Finalizado || componentData.estado == Estados.Aboratdo)"> {{ componentData.descricao ?? 'Descrição'}} </h4>
+                        <input v-else ref="editInputDescription" v-model="editableDescription" @blur="cancelEditDescription">
+                        <div class = "d-flex flex-row align-center botoes">
+                            <div>
+                                <div v-if="componentData.estado != Estados.Finalizado && componentData.estado != Estados.Aboratdo" class="botoes">
+                                    <v-btn prepend-icon="mdi-plus" color="white" @click="addSubMeta" elevated>
+                                        Adicionar SubMeta
+                                    </v-btn>
+                                    <v-btn prepend-icon="mdi-delete" color="white" @click="confirmDeletion" elevated>
+                                        Deletar Meta
+                                    </v-btn>
+                                </div>
+                                
+                                <div v-else>
+                                    <v-btn prepend-icon="mdi-redo-variant" color="white" @click="confirmReopen" elevated>
+                                        Reabrir Meta
+                                    </v-btn>
+                                    <ConfirmDialog v-if="componentData.openReopenConfirmationDialog" :title="dialogTitle" :message="dialogMessage" :is-open="componentData.openReopenConfirmationDialog" @update-response="reopenMeta"></ConfirmDialog>
+                                </div>
                             </div>
+                            <v-dialog max-width="800">
+                                <template v-slot:activator="{ props: activatorProps }">
+                                    <v-btn
+                                        prepend-icon="mdi-history"
+                                        v-bind="activatorProps"
+                                        text="Ver Historico"
+                                    ></v-btn>
+                                </template>
 
-                            </template>
-                        </v-card>
-                        </template>
-                        </v-dialog>
+                                <template v-slot:default="{ isActive }">
+                                    <v-card :title="`Histórico da Meta ${componentProperties.meta.id}: ${componentData.nome}`">
+                                        <template v-slot:text>
+                                            <div v-for="(h, index) in componentData.historico" :key="index">
+                                                <p>{{ h }}</p>
+                                            </div>
+                                        </template>
+                                    </v-card>
+                                </template>
+                            </v-dialog>
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <draggable v-if="componentData.subMetas.length > 0" v-model="componentData.subMetas" tag="ol" itemKey="id" @end="updateOrder">
-                            <template #item="{element: sm}"> 
-                                <li :key="sm.id" v-if="!sm.isDeleted">
-                                    <SubMetas :sub-meta="sm" @delete-sub-meta="deleteSubMeta" @update-sub-meta="updateSubMeta"></SubMetas>
-                                </li>
-                            </template>
-                        </draggable>
+                    <div>
+                        <draggable v-if="componentData.subMetas.length > 0" v-model="componentData.subMetas" tag="ol" itemKey="id" @end="updateOrder">
+                                <template #item="{element: sm}"> 
+                                    <li :key="sm.id" v-if="!sm.isDeleted" class="submeta-item">
+                                        <SubMetas :sub-meta="sm" @delete-sub-meta="deleteSubMeta" @update-sub-meta="updateSubMeta"></SubMetas>
+                                    </li>
+                                </template>
+                            </draggable>
                     </div>
                         
                 </div>
