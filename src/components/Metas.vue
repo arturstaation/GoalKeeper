@@ -10,21 +10,32 @@
             <v-expansion-panel-text>
                 <div>
                     <div>
-                        <div>
-                            <h1 @click="changeName" v-if="!componentData.isEdit">
-                                {{ editableName }}
-                            </h1>
-                            <input v-else ref="editInput" v-model="editableName" @blur="cancelEdit">
-                            <Estado :estado="componentData.estado" @update-estado="updateEstado"></Estado>
+                    <div>
+                        <h1 @click="changeName" v-if="!(componentData.isEdit) || (componentData.estado == Estados.Finalizado || componentData.estado == Estados.Aboratdo)">
+                            {{ editableName }}
+                        </h1>
+                        <input v-else ref="editInput" v-model="editableName" @blur="cancelEdit">
+                        <Estado :estado="componentData.estado" @update-estado="updateEstado"></Estado>
+                    </div>
+
+                    <div>
+                        <div v-if="componentData.estado != Estados.Finalizado && componentData.estado != Estados.Aboratdo">
+                            <h3 @click="changeDescription" v-if="!componentData.isEditDescription"> {{ componentData.descricao ?? 'Descrição'}} </h3>
+                            <input v-else ref="editInputDescription" v-model="editableDescription" @blur="cancelEditDescription">
+                            <v-btn prepend-icon="mdi-plus" color="white" @click="addSubMeta" elevated>
+                                Adicionar SubMeta
+                            </v-btn>
+                            <v-btn prepend-icon="mdi-delete" color="white" @click="confirmDeletion" elevated>
+                                Deletar Meta
+                            </v-btn>
                         </div>
-                        <h3 @click="changeDescription" v-if="!componentData.isEditDescription"> {{ componentData.descricao ?? 'Descrição'}} </h3>
-                        <input v-else ref="editInputDescription" v-model="editableDescription" @blur="cancelEditDescription">
-                        <v-btn prepend-icon="mdi-plus" color="white" @click="addSubMeta" elevated>
-                            Adicionar SubMeta
-                        </v-btn>
-                        <v-btn prepend-icon="mdi-delete" color="white" @click="confirmDeletion" elevated>
-                            Deletar Meta
-                        </v-btn>
+                        
+                        <div v-else>
+                            <v-btn prepend-icon="mdi-redo-variant" color="white" @click="confirmReopen" elevated>
+                                Reabrir Meta
+                            </v-btn>
+                            <ConfirmDialog v-if="componentData.openReopenConfirmationDialog" :title="dialogTitle" :message="dialogMessage" :is-open="componentData.openReopenConfirmationDialog" @update-response="reopenMeta"></ConfirmDialog>
+                        </div>
                         <v-dialog max-width="800">
                         <template v-slot:activator="{ props: activatorProps }">
                         <v-btn
@@ -46,8 +57,8 @@
                         </template>
                         </v-dialog>
                     </div>
-                    <div>
-
+                </div>
+                <div>
                     <draggable v-if="componentData.subMetas.length > 0" v-model="componentData.subMetas" tag="ol" itemKey="id" @end="updateOrder">
                             <template #item="{element: sm}"> 
                                 <li :key="sm.id" v-if="!sm.isDeleted">
@@ -80,11 +91,13 @@ import ConfirmDialog from "./ConfirmDialog.vue";
 export enum EMetasEventsNames{
     onDeleteMeta = 'deleteMeta',
     onUpdateMeta = 'updateMeta',
+    onReopenMeta = 'reopenMeta',
 }
 
 interface IMetasEvents{
     (e: EMetasEventsNames.onDeleteMeta, MetaId : number) : void;
     (e: EMetasEventsNames.onUpdateMeta, newMeta : Meta) : void;
+    (e: EMetasEventsNames.onReopenMeta, MetaId : number) : void;
 }
 
 interface MetasComponentProperties {
@@ -102,6 +115,7 @@ interface MetasComponentData {
     isEditDescription: boolean,
     qntSubMetas: number,
     openConfirmationDialog: boolean,
+    openReopenConfirmationDialog: boolean,
 }
 
 </script>
@@ -121,6 +135,7 @@ const componentData  = reactive<MetasComponentData>({
     isEditDescription: false,
     qntSubMetas: componentProperties.meta.subMetasNumber,
     openConfirmationDialog: false,
+    openReopenConfirmationDialog: false,
 });
 
 const editInput = ref(null);
@@ -310,6 +325,24 @@ const updateOrder = (event : SortableEvent) =>{
         updateMeta();
     }
   }
+}
+
+const confirmReopen = () =>{
+
+    componentData.openReopenConfirmationDialog = true;
+    dialogMessage.value = `Tem certeza que deseja reabrir a Meta : ${componentData.nome}?`
+    dialogTitle.value = `Reabrir Meta ${componentData.nome}`
+}
+
+const reopenMeta = (answer: boolean) =>{
+
+    if(answer){
+        updateEstado(Estados.NaoIniciado);
+        emits(EMetasEventsNames.onReopenMeta, componentProperties.meta.id);
+    }
+    
+    componentData.openReopenConfirmationDialog = false;
+
 }
  
 

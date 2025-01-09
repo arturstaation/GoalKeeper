@@ -1,7 +1,7 @@
 <template>
     <div class="estado-container" @click="changeEstado">
       <div :class="`estado-bolinha ${estadoClasses[componentData.estado]}`"> </div>
-      <p v-if="!componentData.isEdit"> {{ componentData.estado }}</p>
+      <p v-if="!componentData.isEdit || (componentData.estado == Estados.Finalizado || componentData.estado == Estados.Aboratdo)"> {{ componentData.estado }}</p>
       <select ref="editInput" v-else v-model="componentData.estado" @change="cancelEdit">
         <option v-for="(estado, index) in estadosDisponiveis" :key="index" :value="estado">
           {{ estado }}

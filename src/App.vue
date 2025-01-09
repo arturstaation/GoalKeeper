@@ -17,7 +17,7 @@
       <draggable v-model="metasList" tag="ol" itemKey="id" @end="updateOrder">
         <template #item="{element: m}"> 
           <li :key="m.id" v-if="!m.isDeleted && (m.estado != Estados.Finalizado && m.estado != Estados.Aboratdo)">
-          <Metas :meta="m" @delete-meta="deleteMeta" @update-meta="updateMeta"></Metas>
+            <Metas :meta="m" @delete-meta="deleteMeta" @update-meta="updateMeta"></Metas>
           </li>
         </template>
       </draggable>
@@ -29,7 +29,7 @@
       <draggable v-model="metasList" tag="ol" itemKey="id" @end="updateOrder">
         <template #item="{element: m}"> 
           <li :key="m.id" v-if="!m.isDeleted && (m.estado == Estados.Finalizado || m.estado == Estados.Aboratdo)">
-          <Metas :meta="m" @delete-meta="deleteMeta" @update-meta="updateMeta"></Metas>
+            <Metas :meta="m" @delete-meta="deleteMeta" @update-meta="updateMeta" @reopen-meta="reopenMeta"></Metas>
           </li>
         </template>
       </draggable>
@@ -188,6 +188,21 @@ const resetData = () => {
   hasSomeUnFinishedValue.value = hasSomeUnFinished();
 }
 
+const reopenMeta = (id: number) =>{
+
+
+  const currentItemIndex = metasList.value.findIndex((meta : Meta) => meta.id == id);
+  
+  if (currentItemIndex !== -1) {
+
+    const [recortado] = metasList.value.splice(currentItemIndex, 1);
+
+    metasList.value.push(recortado);
+
+    localStorage.setItem('metas', JSON.stringify(metasList.value));
+
+  }
+}
 
 </script>
 

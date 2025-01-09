@@ -16,7 +16,7 @@
                     <div v-for="(m, index) in componentProperties.metas" :key="index">
                         <div v-if="m.estado == Estados.Deletado">
                         <p>{{ m.nome }}</p>
-                        <v-btn prepend-icon="mdi-plus" color="white" @click="confirmRecoverMeta(m)" elevated>
+                        <v-btn prepend-icon="mdi-backup-restore" color="white" @click="confirmRecoverMeta(m)" elevated>
                         Recuperar Meta
                         </v-btn>
                         </div>
