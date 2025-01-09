@@ -1,5 +1,9 @@
 <template>
 
+  <div>
+    <h1>GoalKepper</h1>
+    <p>Seu Gerenciador de Metas</p>
+  </div>
   <div class = "botoes">
     <v-btn prepend-icon="mdi-plus" color="white" @click="addMeta" elevated>
     Adicionar Meta
