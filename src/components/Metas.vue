@@ -2,9 +2,17 @@
     <v-expansion-panels>
         <v-expansion-panel>
             <v-expansion-panel-title>
-                <div class="d-flex align-center justify-space-between w-100">
+                <div class="d-flex flex-column w-100">
+                    <div class = "d-flex flex-row justify-space-between">
                         {{ editableName }}
                         <Estado :estado="componentData.estado" readonly></Estado>
+                    </div>
+                    <div class="d-flex flex-row align-center">
+                        <div class="progress-container">
+                            <div class="progress-bar" :style="{ width: `${getPorcentagem()}%` }"></div>
+                        </div>
+                        <div class="progress-text">{{ `${getPorcentagem()}%` }}</div>
+                    </div>
                 </div>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
@@ -342,6 +350,27 @@ const reopenMeta = (answer: boolean) =>{
     }
     
     componentData.openReopenConfirmationDialog = false;
+
+}
+
+const getPorcentagem = () : number =>{
+
+
+    let qntSubMetas = 0;
+    let qntSubMetasFinalizadas = 0;
+    componentData.subMetas.forEach((sm : SubMeta) => {
+        if(!sm.isDeleted){
+            qntSubMetas++;
+            if(sm.estado == Estados.Finalizado || sm.estado == Estados.Aboratdo){
+                qntSubMetasFinalizadas++;
+            }
+        }
+
+    });
+
+    if(qntSubMetas == 0)
+        return 0
+    return Math.trunc((qntSubMetasFinalizadas / qntSubMetas) * 100 * 100) / 100;;
 
 }
  
