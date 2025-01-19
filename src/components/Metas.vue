@@ -377,3 +377,142 @@ const getPorcentagem = () : number =>{
  
 
 </script>
+
+<style scoped>
+.d-flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.justify-space-between {
+  justify-content: space-between;
+}
+
+h1 {
+  font-size: 1.8rem;
+  color: #2c3e50;
+}
+
+h2, h4 {
+  margin: 0;
+  color: #34495e;
+}
+
+h2 {
+  cursor: pointer;
+}
+
+h4 {
+  font-size: 1rem;
+  color: #7f8c8d;
+  cursor: pointer;
+}
+
+h2:hover,
+h4:hover {
+  text-decoration: underline;
+}
+
+.progress-container {
+  width: 100%;
+  height: 8px;
+  background-color: #ecf0f1;
+  border-radius: 5px;
+  margin: 0 10px;
+  position: relative;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #27ae60;
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 0.9rem;
+  color: #34495e;
+}
+
+.botoes {
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+v-btn {
+  font-size: 0.9rem;
+  background-color: #3498db;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+v-btn:hover {
+  background-color: #2980b9;
+}
+
+v-btn[prepend-icon="mdi-delete"] {
+  background-color: #e74c3c;
+}
+
+v-btn[prepend-icon="mdi-delete"]:hover {
+  background-color: #c0392b;
+}
+
+v-btn[prepend-icon="mdi-redo-variant"] {
+  background-color: #f39c12;
+}
+
+v-btn[prepend-icon="mdi-redo-variant"]:hover {
+  background-color: #e67e22;
+}
+
+.submeta-item {
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #bdc3c7;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.submeta-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.painel-texto {
+  padding: 1rem;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+input {
+  font-size: 1rem;
+  padding: 0.5rem;
+  border: 1px solid #bdc3c7;
+  border-radius: 5px;
+  width: 100%;
+}
+
+input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+</style>

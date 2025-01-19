@@ -183,3 +183,76 @@ watch(() => (componentProperties.subMeta), (newSubMeta, oldSubMeta) =>{
 
 
 </script>
+
+
+<style scoped>
+
+h3 {
+  font-size: 1.5rem;
+  color: #2c3e50;
+  margin: 0 0 1rem;
+  cursor: pointer;
+}
+
+h3:hover {
+  text-decoration: underline;
+}
+
+h5 {
+  font-size: 1rem;
+  color: #7f8c8d;
+  margin: 0.5rem 0;
+  cursor: pointer;
+}
+
+h5:hover {
+  text-decoration: underline;
+}
+
+input {
+  font-size: 1rem;
+  padding: 0.5rem;
+  border: 1px solid #bdc3c7;
+  border-radius: 5px;
+  width: 100%;
+  margin: 0.5rem 0;
+}
+
+input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+v-btn {
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+v-btn:hover {
+  background-color: #c0392b;
+}
+
+.historico {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border-left: 4px solid #bdc3c7;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+.estado {
+  font-size: 1rem;
+  color: #27ae60;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+</style>

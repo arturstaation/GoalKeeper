@@ -210,4 +210,80 @@ const reopenMeta = (id: number) =>{
 </script>
 
 <style scoped>
+
+.d-flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.align-center {
+  align-items: center;
+}
+
+h1 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+p {
+  font-size: 1.2rem;
+  color: #34495e;
+  margin-bottom: 2rem;
+}
+
+
+.botoes {
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+v-btn {
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+v-btn:hover {
+  background-color: #ecf0f1;
+}
+
+
+.metas {
+  margin-top: 2rem;
+  width: 100%;
+}
+
+.meta-item {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #bdc3c7;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.meta-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+ol {
+  list-style: none;
+  padding: 0;
+}
+
+ol li {
+  margin-bottom: 1rem;
+}
 </style>
