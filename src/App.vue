@@ -8,11 +8,14 @@
       Adicionar Meta
       </v-btn>
       <RecuperarMetas :metas="metasList" @recuperar-meta="recoverMeta"></RecuperarMetas>
+      <v-btn prepend-icon="mdi-refresh" color="white" @click="resetData" elevated>
+      Resetar Dados
+      </v-btn>
     </div>
   </div>
 
   
-  <div v-if="hasSomeUnFinishedValue" class="metas">
+    <div v-if="hasSomeUnFinishedValue" class="metas">
       <h1>Metas em Aberto</h1>
       <draggable v-model="metasList" tag="ol" itemKey="id" @end="updateOrder">
         <template #item="{element: m}"> 
