@@ -34,7 +34,7 @@
                                     <v-btn prepend-icon="mdi-plus" color="white" @click="addSubMeta" elevated>
                                         Adicionar SubMeta
                                     </v-btn>
-                                    <v-btn prepend-icon="mdi-delete" color="white" @click="confirmDeletion" elevated>
+                                    <v-btn prepend-icon="mdi-delete" color="white" @click="confirmDeletion" elevated style="background-color: #e74c3c; color: white;" >
                                         Deletar Meta
                                     </v-btn>
                                 </div>
@@ -46,25 +46,27 @@
                                     <ConfirmDialog v-if="componentData.openReopenConfirmationDialog" :title="dialogTitle" :message="dialogMessage" :is-open="componentData.openReopenConfirmationDialog" @update-response="reopenMeta"></ConfirmDialog>
                                 </div>
                             </div>
-                            <v-dialog max-width="800">
-                                <template v-slot:activator="{ props: activatorProps }">
-                                    <v-btn
-                                        prepend-icon="mdi-history"
-                                        v-bind="activatorProps"
-                                        text="Ver Historico"
-                                    ></v-btn>
-                                </template>
+                            <div>
+                                <v-dialog max-width="800">
+                                    <template v-slot:activator="{ props: activatorProps }">
+                                        <v-btn
+                                            prepend-icon="mdi-history"
+                                            v-bind="activatorProps"
+                                            text="Ver Historico"
+                                        ></v-btn>
+                                    </template>
 
-                                <template v-slot:default="{ isActive }">
-                                    <v-card :title="`Histórico da Meta ${componentProperties.meta.id}: ${componentData.nome}`">
-                                        <template v-slot:text>
-                                            <div v-for="(h, index) in componentData.historico" :key="index">
-                                                <p>{{ h }}</p>
-                                            </div>
-                                        </template>
-                                    </v-card>
-                                </template>
-                            </v-dialog>
+                                    <template v-slot:default="{ isActive }">
+                                        <v-card :title="`Histórico da Meta ${componentProperties.meta.id}: ${componentData.nome}`">
+                                            <template v-slot:text>
+                                                <div v-for="(h, index) in componentData.historico" :key="index">
+                                                    <p>{{ h }}</p>
+                                                </div>
+                                            </template>
+                                        </v-card>
+                                    </template>
+                                </v-dialog>
+                            </div>
                         </div>
                     </div>
                     <div>
@@ -463,14 +465,6 @@ v-btn {
 
 v-btn:hover {
   background-color: #2980b9;
-}
-
-v-btn[prepend-icon="mdi-delete"] {
-  background-color: #e74c3c;
-}
-
-v-btn[prepend-icon="mdi-delete"]:hover {
-  background-color: #c0392b;
 }
 
 v-btn[prepend-icon="mdi-redo-variant"] {
