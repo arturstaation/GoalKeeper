@@ -10,6 +10,10 @@ li {
   padding: 0;
 }
 
+ol li {
+  margin-bottom: 1rem;
+}
+
 .botoes {
   display: flex;
   flex-direction: row;
@@ -30,54 +34,14 @@ li {
   ;
 }
 
-
-.estado-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.estado-bolinha {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-}
-
-.nao-iniciado {
-  background-color: gray;
-}
-
-.em-progresso {
-  background-color: blue;
-}
-
-.finalizado {
-  background-color: green;
-}
-
-.abortado {
-  background-color: red;
-}
-
-
-.pausado {
-  background-color: orange;
-}
-
-.deletado {
-  background-color: red;
-}
-
-.estado-edit {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
 .metas-deletadas {
   margin-bottom: 20px;
 }
 
 .botoes {
   gap: 10px;
+}
+
+body {
+  background-color: rgb(226, 224, 222);
 }

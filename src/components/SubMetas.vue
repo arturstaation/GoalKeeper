@@ -8,9 +8,13 @@
             </div>
             <h5 @click="changeDescription" v-if="!componentData.isEditDescription"> {{ componentData.descricao ?? 'Descrição'}} </h5>
             <input v-else ref="editInputDescription" v-model="editableName" @blur="cancelEditDescription">
-            <v-btn prepend-icon="mdi-delete" color="white" @click="deleteSubMeta" elevated>
-                Deletar SubMeta
-            </v-btn>
+            <v-hover>
+                <template v-slot:default="{ isHovering, props }">
+                    <v-btn v-bind="props" prepend-icon="mdi-delete" :color="isHovering ? '#c0392b' : '#e74c3c'" @click="deleteSubMeta" elevated rounded>
+                        Deletar SubMeta
+                    </v-btn>
+                </template>
+            </v-hover>
         </div>
     </div>
     
@@ -224,20 +228,6 @@ input:focus {
   box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
 }
 
-v-btn {
-  font-size: 0.9rem;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-v-btn:hover {
-  background-color: #c0392b;
-}
 
 .historico {
   font-size: 0.9rem;

@@ -28,44 +28,92 @@
 
                         <h4 @click="changeDescription" v-if="!componentData.isEditDescription  || (componentData.estado == Estados.Finalizado || componentData.estado == Estados.Aboratdo)"> {{ componentData.descricao ?? 'Descrição'}} </h4>
                         <input v-else ref="editInputDescription" v-model="editableDescription" @blur="cancelEditDescription">
-                        <div class = "d-flex flex-row align-center botoes">
-                            <div>
-                                <div v-if="componentData.estado != Estados.Finalizado && componentData.estado != Estados.Aboratdo" class="botoes">
-                                    <v-btn prepend-icon="mdi-plus" color="white" @click="addSubMeta" elevated>
-                                        Adicionar SubMeta
-                                    </v-btn>
-                                    <v-btn prepend-icon="mdi-delete" color="white" @click="confirmDeletion" elevated style="background-color: #e74c3c; color: white;" >
-                                        Deletar Meta
-                                    </v-btn>
-                                </div>
-                                
-                                <div v-else>
-                                    <v-btn prepend-icon="mdi-redo-variant" color="white" @click="confirmReopen" elevated>
-                                        Reabrir Meta
-                                    </v-btn>
-                                    <ConfirmDialog v-if="componentData.openReopenConfirmationDialog" :title="dialogTitle" :message="dialogMessage" :is-open="componentData.openReopenConfirmationDialog" @update-response="reopenMeta"></ConfirmDialog>
-                                </div>
-                            </div>
-                            <div>
-                                <v-dialog max-width="800">
-                                    <template v-slot:activator="{ props: activatorProps }">
-                                        <v-btn
-                                            prepend-icon="mdi-history"
-                                            v-bind="activatorProps"
-                                            text="Ver Historico"
-                                        ></v-btn>
-                                    </template>
+                        <div class="d-flex flex-row align-center botoes">
 
-                                    <template v-slot:default="{ isActive }">
-                                        <v-card :title="`Histórico da Meta ${componentProperties.meta.id}: ${componentData.nome}`">
-                                            <template v-slot:text>
-                                                <div v-for="(h, index) in componentData.historico" :key="index">
-                                                    <p>{{ h }}</p>
-                                                </div>
-                                            </template>
-                                        </v-card>
+                            <div v-if="componentData.estado != Estados.Finalizado && componentData.estado != Estados.Aboratdo" class="subbotoes">
+                            <v-hover>
+                                <template v-slot:default="{ isHovering, props }">
+                                <v-btn
+                                    v-bind="props"
+                                    prepend-icon="mdi-plus"
+                                    :color="isHovering ? '#2980b9' : '#3498db'"
+                                    @click="addSubMeta"
+                                    elevated
+                                    rounded
+                                >
+                                    Adicionar SubMeta
+                                </v-btn>
+                                </template>
+                            </v-hover>
+                            <v-hover>
+                                <template v-slot:default="{ isHovering, props }">
+                                <v-btn
+                                    v-bind="props"
+                                    prepend-icon="mdi-delete"
+                                    :color="isHovering ? '#e74c3c' : '#3498db'"
+                                    @click="confirmDeletion"
+                                    elevated
+                                    rounded
+                                >
+                                    Deletar Meta
+                                </v-btn>
+                                </template>
+                            </v-hover>
+                            </div>
+
+                            <div v-else>
+                            <v-hover>
+                                <template v-slot:default="{ isHovering, props }">
+                                <v-btn
+                                    class="text-white"
+                                    v-bind="props"
+                                    prepend-icon="mdi-redo-variant"
+                                    :color="isHovering ? '#e67e22' : '#f39c12'"
+                                    @click="confirmReopen"
+                                    elevated
+                                    rounded
+                                >
+                                    Reabrir Meta
+                                </v-btn>
+                                </template>
+                            </v-hover>
+                            <ConfirmDialog
+                                v-if="componentData.openReopenConfirmationDialog"
+                                :title="dialogTitle"
+                                :message="dialogMessage"
+                                :is-open="componentData.openReopenConfirmationDialog"
+                                @update-response="reopenMeta"
+                            />
+                            </div>
+
+                            <div>
+                            <v-dialog max-width="800">
+                                <template v-slot:activator="{ props }">
+                                <v-hover>
+                                    <template v-slot:default="{ isHovering, props: hoverProps }">
+                                    <v-btn
+                                        prepend-icon="mdi-history"
+                                        v-bind="{ ...props, ...hoverProps }"
+                                        :color="isHovering ? '#2980b9' : '#3498db'"
+                                        rounded
+                                    >
+                                        Ver Histórico
+                                    </v-btn>
                                     </template>
-                                </v-dialog>
+                                </v-hover>
+                                </template>
+
+                                <v-card>
+                                <template v-slot:title>
+                                    Histórico da Meta {{ componentProperties.meta.id }}: {{ componentData.nome }}
+                                </template>
+                                <template v-slot:text>
+                                    <div v-for="(h, index) in componentData.historico" :key="index">
+                                    <p>{{ h }}</p>
+                                    </div>
+                                </template>
+                                </v-card>
+                            </v-dialog>
                             </div>
                         </div>
                     </div>
@@ -435,6 +483,12 @@ h4:hover {
   position: relative;
 }
 
+.subbotoes {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+
 .progress-bar {
   height: 100%;
   background-color: #27ae60;
@@ -452,28 +506,6 @@ h4:hover {
   margin-top: 1rem;
 }
 
-v-btn {
-  font-size: 0.9rem;
-  background-color: #3498db;
-  color: #ffffff;
-  border: none;
-  border-radius: 5px;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-v-btn:hover {
-  background-color: #2980b9;
-}
-
-v-btn[prepend-icon="mdi-redo-variant"] {
-  background-color: #f39c12;
-}
-
-v-btn[prepend-icon="mdi-redo-variant"]:hover {
-  background-color: #e67e22;
-}
 
 .submeta-item {
   padding: 1rem;
@@ -509,4 +541,5 @@ input:focus {
   border-color: #3498db;
   box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
 }
+
 </style>

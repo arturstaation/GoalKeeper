@@ -4,11 +4,11 @@
     <h1>GoalKepper</h1>
     <p>Seu Gerenciador de Metas</p>
     <div class = "d-flex flex-row botoes">
-      <v-btn prepend-icon="mdi-plus" color="white" @click="addMeta" elevated>
+      <v-btn prepend-icon="mdi-plus" color="white" @click="addMeta" elevated rounded>
       Adicionar Meta
       </v-btn>
       <RecuperarMetas :metas="metasList" @recuperar-meta="recoverMeta"></RecuperarMetas>
-      <v-btn prepend-icon="mdi-refresh" color="white" @click="resetData" elevated>
+      <v-btn prepend-icon="mdi-refresh" color="white" @click="resetData" elevated rounded>
       Resetar Dados
       </v-btn>
     </div>
@@ -211,73 +211,63 @@ const reopenMeta = (id: number) =>{
 
 <style scoped>
 
-.d-flex {
-  display: flex;
-}
-
-.flex-column {
-  flex-direction: column;
-}
-
-.flex-row {
-  flex-direction: row;
-}
-
-.align-center {
-  align-items: center;
-}
-
 h1 {
   font-size: 2.5rem;
   color: #2c3e50;
   margin-bottom: 1rem;
+  text-align: center; /* Centraliza o título */
 }
 
 p {
   font-size: 1.2rem;
   color: #34495e;
   margin-bottom: 2rem;
+  text-align: center; /* Centraliza o subtítulo */
 }
 
-
+/* Botões */
 .botoes {
+  display: flex;
   gap: 1rem;
   margin-bottom: 2rem;
+  justify-content: center; /* Centraliza os botões */
 }
 
 v-btn {
   font-size: 1rem;
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1.2rem;
   border-radius: 5px;
   border: none;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 v-btn:hover {
   background-color: #ecf0f1;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-
+/* Metas */
 .metas {
   margin-top: 2rem;
   width: 100%;
 }
 
 .meta-item {
-  padding: 1rem;
+  padding: 1.2rem;
   margin-bottom: 1rem;
   border: 1px solid #bdc3c7;
-  border-radius: 8px;
-  background-color: #f9f9f9;
+  border-radius: 10px;
+  background-color: #ffffff;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .meta-item:hover {
   transform: translateY(-3px);
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+/* Lista de Metas */
 ol {
   list-style: none;
   padding: 0;

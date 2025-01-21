@@ -81,3 +81,75 @@ watch( () => (componentProperties.estado), (newEstado, oldEstado) =>{
 })
 
 </script>
+
+<style scoped>
+.estado-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.estado-bolinha {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.estado-bolinha.nao-iniciado {
+  background-color: #bdc3c7;
+}
+
+.estado-bolinha.em-progresso {
+  background-color: #3498db;
+}
+
+.estado-bolinha.pausado {
+  background-color: #f1c40f;
+}
+
+.estado-bolinha.deletado {
+  background-color: #e74c3c;
+}
+
+.estado-bolinha.finalizado {
+  background-color: #27ae60;
+}
+
+.estado-bolinha.abortado {
+  background-color: #7f8c8d;
+}
+
+.estado-container:hover .estado-bolinha {
+  transform: scale(1.2);
+}
+
+.estado-container p {
+  font-size: 1rem;
+  color: #2c3e50;
+  margin: 0;
+}
+
+select {
+  font-size: 1rem;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid #bdc3c7;
+  border-radius: 5px;
+  background-color: #ffffff;
+  color: #2c3e50;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+select:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
+option {
+  font-size: 1rem;
+  color: #2c3e50;
+}
+</style>
