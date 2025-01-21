@@ -8,9 +8,7 @@
       Adicionar Meta
       </v-btn>
       <RecuperarMetas :metas="metasList" @recuperar-meta="recoverMeta"></RecuperarMetas>
-      <v-btn prepend-icon="mdi-refresh" color="white" @click="resetData" elevated rounded>
-      Resetar Dados
-      </v-btn>
+      <ResetarMetas @reset-metas="resetData"></ResetarMetas>
     </div>
   </div>
 
@@ -49,6 +47,7 @@ import Metas from './components/Metas.vue';
 import type { SortableEvent } from "sortablejs"
 import type Meta from './interfaces/Meta';
 import RecuperarMetas from "./components/RecuperarMetas.vue";
+import ResetarMetas from "./components/ResetarMetas.vue";
 
 </script>
 
@@ -180,15 +179,17 @@ const recoverMeta = (m : Meta) => {
   
 }
 
-const resetData = () => {
+const resetData = (answer: boolean) => {
 
-  metasList.value = [];
-  metasQnt.value = 0;
-  
-  localStorage.setItem('metas', JSON.stringify(metasList.value));
-  localStorage.setItem('metasQnt', JSON.stringify(metasQnt.value));
-  hasSomeFinishedValue.value = hasSomeFinished();
-  hasSomeUnFinishedValue.value = hasSomeUnFinished();
+  if(answer){
+    metasList.value = [];
+    metasQnt.value = 0;
+    
+    localStorage.setItem('metas', JSON.stringify(metasList.value));
+    localStorage.setItem('metasQnt', JSON.stringify(metasQnt.value));
+    hasSomeFinishedValue.value = hasSomeFinished();
+    hasSomeUnFinishedValue.value = hasSomeUnFinished();
+  }
 }
 
 const reopenMeta = (id: number) =>{
@@ -215,14 +216,14 @@ h1 {
   font-size: 2.5rem;
   color: #2c3e50;
   margin-bottom: 1rem;
-  text-align: center; /* Centraliza o título */
+  text-align: center; 
 }
 
 p {
   font-size: 1.2rem;
   color: #34495e;
   margin-bottom: 2rem;
-  text-align: center; /* Centraliza o subtítulo */
+  text-align: center; 
 }
 
 /* Botões */
@@ -230,7 +231,7 @@ p {
   display: flex;
   gap: 1rem;
   margin-bottom: 2rem;
-  justify-content: center; /* Centraliza os botões */
+  justify-content: center; 
 }
 
 v-btn {
@@ -247,7 +248,7 @@ v-btn:hover {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Metas */
+
 .metas {
   margin-top: 2rem;
   width: 100%;
@@ -267,13 +268,4 @@ v-btn:hover {
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Lista de Metas */
-ol {
-  list-style: none;
-  padding: 0;
-}
-
-ol li {
-  margin-bottom: 1rem;
-}
 </style>
