@@ -335,7 +335,7 @@ watch(() => (componentProperties.meta), (newMeta, oldMeta) =>{
 const updateOrder = (event : SortableEvent) =>{
   const { oldIndex, newIndex } = event;
   if(oldIndex != newIndex){
-    const movedItem = componentData.subMetas[oldIndex];
+    const movedItem = componentData.subMetas[oldIndex!];
     if(movedItem){
       if(!movedItem.historico) movedItem.historico = [];
       movedItem.historico.push(`[${new Date().toLocaleString()}] - A SubMeta ${movedItem!.id}: ${movedItem!.nome} foi movida da posição ${oldIndex} para ${newIndex}`);
