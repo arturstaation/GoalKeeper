@@ -194,6 +194,9 @@ const recoverMeta = (m: Meta) => {
     metasList.value.push(recortado);
     localStorage.setItem('metas', JSON.stringify(metasList.value));
   }
+  
+  hasSomeFinishedValue.value = hasSomeFinished();
+  hasSomeUnFinishedValue.value = hasSomeUnFinished();
 };
 
 const resetData = (answer: boolean) => {
