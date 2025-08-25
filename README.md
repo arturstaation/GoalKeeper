@@ -1,44 +1,86 @@
 # GoalKeeper
 
-This template should help get you started developing with Vue 3 in Vite.
+GoalKeeper é um app web para gerenciar metas e acompanhar o progresso de forma visual e intuitiva. Crie objetivos, registre atualizações periódicas e visualize sua evolução com feedbacks claros para manter o foco e ajustar a estratégia ao longo do caminho.
 
-## Recommended IDE Setup
+Demo: https://arturstaation.github.io/GoalKeeper/
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## ✨ Funcionalidades
 
-## Type Support for `.vue` Imports in TS
+- Criação, edição e exclusão de metas
+- Registro de atualizações de progresso
+- Visualização do status (percentual, barras de progresso, estados)
+- Persistência local (LocalStorage) para manter dados entre sessões
+- Interface responsiva e acessível
+- Build estático para deploy no GitHub Pages
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+## 🧱 Tech Stack
 
-## Customize configuration
+- Vue 3 + Vite
+- TypeScript
+- CSS (Vanilla) com design tokens
+- Deploy via GitHub Pages (branch `gh-pages`)
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+## 🚀 Começando
 
-## Project Setup
+### Pré-requisitos
+- Node.js 18+ e npm
 
-```sh
+### Instalação
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
-
-```sh
+### Ambiente de desenvolvimento
+```bash
 npm run dev
 ```
+Acesse a aplicação no endereço exibido pelo Vite (normalmente http://localhost:5173).
 
-### Type-Check, Compile and Minify for Production
-
-```sh
+### Build de produção
+```bash
 npm run build
 ```
+Os artefatos serão gerados na pasta `dist/`.
 
-### Atualizar GH Pages
-Sobe as mudanças para a branch principal<br>
-Depois executa esses comandos:<br>
-npm run build<br>
-git add dist -f<br>
-git commit -am "atualizando gh-pages"<br>
-git push origin --delete gh-pages<br>
-git subtree push --prefix dist origin gh-pages<br>
+## 📦 Deploy no GitHub Pages
 
-Video base: https://www.youtube.com/watch?v=yo2bMGnIKE8<br>
+Fluxo recomendado:
+1. Garanta que suas mudanças estão na branch principal (`main`).
+2. Rode o build:
+   ```bash
+   npm run build
+   ```
+3. Publique a pasta `dist/` na branch `gh-pages`:
+   ```bash
+   git add dist -f
+   git commit -am "atualizando gh-pages"
+   git push origin --delete gh-pages
+   git subtree push --prefix dist origin gh-pages
+   ```
+A página ficará disponível em: https://arturstaation.github.io/GoalKeeper/
+
+## 🗂️ Estrutura do projeto (resumo)
+
+```
+GoalKeeper/
+├─ public/            # Assets estáticos
+├─ src/               # Código-fonte (Vue 3 + TS)
+│  ├─ components/     # Componentes reutilizáveis
+│  ├─ views/          # Páginas/telas
+│  ├─ store/          # Estado (se houver)
+│  ├─ styles/         # Estilos globais / tokens
+│  └─ main.ts         # Bootstrap da aplicação
+├─ index.html
+├─ vite.config.ts
+└─ package.json
+```
+
+
+
+## 🧪 Qualidade e padrões
+
+- Type-check com `vue-tsc`
+- Scripts úteis:
+  - `npm run dev` — Servidor de desenvolvimento
+  - `npm run build` — Build de produção
+  - `npm run preview` — Pré-visualização do build
