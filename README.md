@@ -66,9 +66,9 @@ GoalKeeper/
 ├─ public/            # Assets estáticos
 ├─ src/               # Código-fonte (Vue 3 + TS)
 │  ├─ components/     # Componentes reutilizáveis
-│  ├─ views/          # Páginas/telas
-│  ├─ store/          # Estado (se houver)
+│  ├─ interfaces/          
 │  ├─ styles/         # Estilos globais / tokens
+│  ├─ App.vue         
 │  └─ main.ts         # Bootstrap da aplicação
 ├─ index.html
 ├─ vite.config.ts
