@@ -160,3 +160,58 @@ body {
   .card { padding: var(--space-4); }
   .list-item { flex-direction: column; align-items: flex-start; gap: var(--space-3); }
 }
+
+.item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.drag-handle {
+  cursor: grab;
+  background: transparent;
+  border: 0;
+  color: var(--color-text);
+  padding: 4px 6px;
+  border-radius: 6px;
+  font-size: 16px;
+}
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.drag-ghost {
+  opacity: 0.65;
+  transform: scale(0.98);
+  background: color-mix(in oklab, var(--color-primary) 6%, transparent);
+}
+
+.drag-chosen {
+  outline: 2px dashed var(--color-primary);
+  border-radius: var(--radius-md);
+}
+
+.drag-dragging {
+  cursor: grabbing !important;
+  box-shadow: var(--shadow-2);
+}
+
+.empty-drop {
+  padding: var(--space-6);
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-md);
+  text-align: center;
+  color: var(--text-subtle);
+}
+
+body.dragging {
+  cursor: grabbing;
+}
+
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0);
+  white-space: nowrap; border: 0;
+}

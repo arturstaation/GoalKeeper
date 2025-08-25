@@ -4,5 +4,5 @@ export enum Estados {
     Pausado = "Pausado",
     Deletado = "Deletado",
     Finalizado = "Finalizado",
-    Aboratdo = "Abortado",
+    Abortado = "Abortado",
 }

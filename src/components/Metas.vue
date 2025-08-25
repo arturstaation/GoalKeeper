@@ -23,7 +23,7 @@
           <div class="gk-header-edit">
             <div class="gk-name-edit">
               <h2
-                v-if="!(componentData.isEdit) || (componentData.estado == Estados.Finalizado || componentData.estado == Estados.Aboratdo)"
+                v-if="!(componentData.isEdit) || (componentData.estado == Estados.Finalizado || componentData.estado == Estados.Abortado)"
                 class="gk-clickable-title"
                 @click="changeName"
               >
@@ -44,7 +44,7 @@
 
             <div class="gk-description">
               <h4
-                v-if="!componentData.isEditDescription || (componentData.estado == Estados.Finalizado || componentData.estado == Estados.Aboratdo)"
+                v-if="!componentData.isEditDescription || (componentData.estado == Estados.Finalizado || componentData.estado == Estados.Abortado)"
                 class="gk-clickable-subtle"
                 @click="changeDescription"
               >
@@ -63,7 +63,7 @@
           </div>
 
           <div class="botoes" style="display:flex;align-items:center;gap:12px;margin-top:var(--space-4);flex-wrap:wrap;">
-            <template v-if="componentData.estado != Estados.Finalizado && componentData.estado != Estados.Aboratdo">
+            <template v-if="componentData.estado != Estados.Finalizado && componentData.estado != Estados.Abortado">
               <div class="subbotoes" style="display:flex;flex-direction:row;gap:12px;flex-wrap:wrap;">
                 <v-btn class="btn" prepend-icon="mdi-plus" color="primary" rounded @click="addSubMeta">
                   Adicionar SubMeta
@@ -113,20 +113,47 @@
         </div>
 
         <div style="margin-top: var(--space-4);">
-          <draggable
-            v-if="componentData.subMetas.length > 0"
-            v-model="componentData.subMetas"
-            tag="ol"
-            itemKey="id"
-            @end="updateOrder"
-            class="list"
-          >
-            <template #item="{ element: sm }">
-              <li :key="sm.id" v-if="!sm.isDeleted" class="list-item submeta-item">
-                <SubMetas :sub-meta="sm" @delete-sub-meta="deleteSubMeta" @update-sub-meta="updateSubMeta"/>
-              </li>
-            </template>
-          </draggable>
+          <template v-if="componentData.subMetas.length > 0">
+            <draggable
+              v-model="componentData.subMetas"
+              tag="ol"
+              itemKey="id"
+              class="list"
+              :animation="180"
+              :ghost-class="'drag-ghost'"
+              :chosen-class="'drag-chosen'"
+              :drag-class="'drag-dragging'"
+              :handle="'.drag-handle'"
+              :delay="isTouchDevice ? 120 : 0"
+              :delay-on-touch-only="true"
+              :fallback-tolerance="5"
+              :group="{ name: `submetas-${componentProperties.meta.id}`, put: false, pull: false }"
+              @start="onDragStart"
+              @end="updateOrder"
+            >
+              <template #item="{ element: sm }">
+                <div class="submeta-row">
+                  <div class="item-header">
+                      <button class="drag-handle" aria-label="Reordenar" title="Arraste para reordenar">↕</button>
+                  </div>
+                  <li
+                    :key="sm.id"
+                    v-if="!sm.isDeleted"
+                    class="list-item submeta-item"
+                    tabindex="0"
+                    :data-id="sm.id"
+                  >
+                      <SubMetas
+                        :sub-meta="sm"
+                        @delete-sub-meta="deleteSubMeta"
+                        @update-sub-meta="updateSubMeta"
+                      />
+                  </li>
+                </div>
+              </template>
+            </draggable>
+          </template>
+          <div v-else class="empty-drop">Sem SubMetas. Adicione uma para começar.</div>
         </div>
 
         <ConfirmDialog
@@ -139,6 +166,8 @@
       </v-expansion-panel-text>
     </v-expansion-panel>
   </v-expansion-panels>
+  
+  <div class="sr-only" aria-live="polite">{{ dragStatus }}</div>
 </template>
 
 <script lang="ts">
@@ -184,6 +213,8 @@ interface MetasComponentData {
 
 <script setup lang="ts">
 
+const dragStatus = ref('');
+const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 const emits = defineEmits<IMetasEvents>();
 const componentProperties = withDefaults(defineProps<MetasComponentProperties>(),{});
 
@@ -332,7 +363,14 @@ watch(() => (componentProperties.meta), (newMeta, oldMeta) =>{
   }
 });
 
+const onDragStart = () => {
+  dragStatus.value = 'Reordenação iniciada';
+  document.body.classList.add('dragging');
+};
+
 const updateOrder = (event : SortableEvent) =>{
+  dragStatus.value = 'Reordenação concluída';
+  document.body.classList.remove('dragging');
   const { oldIndex, newIndex } = event;
   if(oldIndex != newIndex){
     const movedItem = componentData.subMetas[oldIndex!];
@@ -364,7 +402,7 @@ const getPorcentagem = (): number => {
   componentData.subMetas.forEach((sm) => {
     if(!sm.isDeleted){
       qntSubMetas++;
-      if(sm.estado == Estados.Finalizado || sm.estado == Estados.Aboratdo){
+      if(sm.estado == Estados.Finalizado || sm.estado == Estados.Abortado){
         qntSubMetasFinalizadas++;
       }
     }
@@ -375,9 +413,7 @@ const getPorcentagem = (): number => {
 </script>
 
 <style scoped>
-h1{
-    color: 
-}
+
 .gk-expansion :deep(.v-expansion-panels) {
   background: transparent;
 }
@@ -438,8 +474,12 @@ h1{
 }
 
 .submeta-item {
-  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  display: grid;
+  grid-template-columns: 24px 1fr; 
+  align-items: start;              
+  padding: var(--space-3);
 }
+.submeta-content { min-width: 0; } 
 .submeta-item:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-1);
@@ -468,5 +508,18 @@ h1{
 
 .input {
   width: 100%;
+}
+
+.submeta-row {
+  display: flex;
+  flex-direction: row;
+  gap: 8px; 
+}
+.submeta-row > :first-child {
+  flex: 0 0 24px;  
+}
+.submeta-row > :last-child {
+  flex: 1 1 auto;   
+  min-width: 0;     
 }
 </style>

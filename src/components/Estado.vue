@@ -3,7 +3,7 @@
     <div :class="['estado-bolinha', estadoClasses[componentData.estado]]"></div>
 
     <p
-      v-if="!componentData.isEdit || (componentData.estado == Estados.Finalizado || componentData.estado == Estados.Aboratdo)"
+      v-if="!componentData.isEdit || (componentData.estado == Estados.Finalizado || componentData.estado == Estados.Abortado)"
       class="estado-text"
     >
       {{ componentData.estado }}
@@ -60,7 +60,7 @@ const estadoClasses: Record<string, string> = {
   [Estados.Pausado]: "pausado",
   [Estados.Deletado]: "deletado",
   [Estados.Finalizado]: "finalizado",
-  [Estados.Aboratdo]: "abortado",
+  [Estados.Abortado]: "abortado",
 };
 
 const estadosDisponiveis = Object.values(Estados).filter((estado) => estado !== Estados.Deletado);
