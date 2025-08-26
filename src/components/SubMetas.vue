@@ -3,7 +3,7 @@
     <div class="gk-header">
       <h3
         v-if="!componentData.isEdit"
-        class="gk-clickable-title"
+        class="gk-clickable-title gk-title-wrap"
         @click="changeName"
       >
         {{ componentData.nome }}
@@ -24,7 +24,7 @@
 
     <h5
       v-if="!componentData.isEditDescription"
-      class="gk-clickable-subtle"
+      class="gk-clickable-subtle gk-desc-wrap"
       @click="changeDescription"
     >
       {{ componentData.descricao ?? 'Descrição' }}
@@ -39,7 +39,7 @@
       placeholder="Digite a descrição"
     />
 
-    <div class="gk-actions">
+    <div class="gk-actions" v-if="componentProperties.parentState != Estados.Finalizado && componentProperties.parentState != Estados.Abortado">
       <v-btn
         class="btn"
         prepend-icon="mdi-delete"
@@ -70,7 +70,8 @@ interface ISubMetasEvents{
 }
 
 interface SubMetasComponentProperties {
-  subMeta: SubMeta
+  subMeta: SubMeta,
+  parentState: Estados
 }
 
 interface SubMetasComponentData {
@@ -106,6 +107,8 @@ const deleteSubMeta = () => {
 };
 
 const changeName = () =>{
+  if(componentProperties.parentState == Estados.Finalizado || componentProperties.parentState == Estados.Abortado)
+    return
   if(componentData.isEditDescription){
     cancelEditDescription();
     updateSubMeta();
@@ -117,16 +120,32 @@ const changeName = () =>{
 
 const cancelEdit = () => {
   componentData.isEdit = false;
-  if(editableName.value){
-    editableName.value = editableName.value.trim();
-    if(editableName.value != componentData.nome){
-      if(!componentData.historico) componentData.historico = [];
-      componentData.historico.push(
-        `[${new Date().toLocaleString()}] - Nome da Submeta ${componentProperties.subMeta.id} alterado de ${componentData.nome} para ${editableName.value}`
-      );
-      componentData.nome = editableName.value;
-    }
+
+  const subMetaId = componentProperties.subMeta.id;
+  const fallback = `SubMeta ${subMetaId}`;
+
+  const raw = editableName?.value as string | undefined;
+  const original = (componentData.nome ?? '').trim() || fallback;
+
+  const normalize = (v: string | undefined | null): string => {
+    if (v == null) return fallback;
+    const t = v.trim();
+    return t === '' ? fallback : t;
+    };
+  const incoming = normalize(raw);
+
+  if (incoming === original) {
+    editableName.value = original;
+    return;
   }
+
+  componentData.historico ??= [];
+  componentData.historico.push(
+    `[${new Date().toLocaleString()}] - Nome da Submeta ${subMetaId} alterado de ${original} para ${incoming}`
+  );
+
+  componentData.nome = incoming;
+  editableName.value = incoming;
   updateSubMeta();
 };
 
@@ -144,6 +163,8 @@ const updateSubMeta = () => {
 };
 
 const changeDescription = () =>{
+  if(componentProperties.parentState == Estados.Finalizado || componentProperties.parentState == Estados.Abortado)
+    return
   if(componentData.isEdit){
     cancelEdit();
     updateSubMeta();
@@ -153,19 +174,43 @@ const changeDescription = () =>{
   nextTick(() => editInputDescription.value?.focus());
 };
 
+let savingDesc = false;
+
 const cancelEditDescription = () => {
-  componentData.isEditDescription = false;
-  if(editableName.value){
-    editableName.value = editableName.value.trim();
-    if(editableName.value != componentData.descricao){
-      if(!componentData.historico) componentData.historico = [];
-      componentData.historico.push(
-        `[${new Date().toLocaleString()}] - Descrição da Submeta ${componentProperties.subMeta.id}: ${componentData.nome} alterado de ${componentData.descricao} para ${editableName.value}`
-      );
-      componentData.descricao = editableName.value;
+  if (savingDesc) return;
+  savingDesc = true;
+
+  try {
+    componentData.isEditDescription = false;
+
+    const normalize = (v: string | undefined | null): string | undefined => {
+      if (v == null) return undefined;
+      const t = v.trim();
+      return t === '' ? undefined : t;
+    };
+
+    const before = normalize(componentData.descricao);
+    const raw = (editableName?.value ?? '') as string;
+    const incoming = normalize(raw);
+
+    if (incoming === before) {
+      updateSubMeta();
+      return;
     }
+
+    componentData.descricao = incoming;
+
+    componentData.historico ??= [];
+    const fmt = (v: string | undefined) => (v == null ? '(vazio)' : v);
+    componentData.historico.push(
+      `[${new Date().toLocaleString()}] - Descrição da Submeta ${componentProperties.subMeta.id}: ` +
+      `${componentData.nome} alterado de ${fmt(before)} para ${fmt(incoming)}`
+    );
+
+    updateSubMeta();
+  } finally {
+    setTimeout(() => { savingDesc = false; }, 0);
   }
-  updateSubMeta();
 };
 
 const updateEstado = (estado : Estados) => {
@@ -190,28 +235,38 @@ watch(() => (componentProperties.subMeta), (newSubMeta, oldSubMeta) =>{
 
 <style scoped>
 .gk-submeta {
-  display: grid;
-  gap: var(--space-3);
+box-sizing: border-box;
+width: 100%;
+max-width: 100%;
+min-width: 0; 
+display: grid; 
+grid-auto-rows: auto;
+gap: var(--space-3);
 }
 
 .gk-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  flex-wrap: wrap;
+display: flex; 
+align-items: center;
+justify-content: space-between;
+gap: var(--space-4);
+flex-wrap: nowrap; 
+min-width: 0;
+color: var(--color-text)
 }
 
+.gk-header > * { min-width: 0; }
 .gk-clickable-title {
-  margin: 0 0 var(--space-2);
-  font-size: clamp(16px, 2.4vw, 18px);
-  color: var(--color-text);
-  cursor: pointer;
+margin: 0;
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap; 
 }
 .gk-clickable-title:hover {
   text-decoration: underline;
 }
+.gk-estado { white-space: nowrap; }
 
+.gk-actions { justify-self: start; } 
 .gk-clickable-subtle {
   margin: 0;
   color: var(--color-text-muted);
@@ -219,6 +274,15 @@ watch(() => (componentProperties.subMeta), (newSubMeta, oldSubMeta) =>{
 }
 .gk-clickable-subtle:hover {
   text-decoration: underline;
+}
+
+.gk-title-wrap {
+  white-space: normal;          
+  word-break: break-word;       
+  overflow-wrap: anywhere;      
+  flex: 1 1 auto;               
+  min-width: 0;                 
+  margin: 0;                  
 }
 
 :deep(.v-btn.btn) {

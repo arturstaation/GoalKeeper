@@ -48,21 +48,23 @@
           @end="onDragEndAbertas"
         >
           <template #item="{ element: m }">
-            <li
-              :key="m.id"
-              class="list-item meta-item"
-              tabindex="0"
-              :data-id="m.id"
-            >
+            <div class="meta-row">
               <div class="item-header">
-                <button class="drag-handle" aria-label="Reordenar" title="Arraste para reordenar">↕</button>
+                  <button class="drag-handle" aria-label="Reordenar" title="Arraste para reordenar">↕</button>
               </div>
-              <Metas
-                :meta="m"
-                @delete-meta="deleteMeta"
-                @update-meta="updateMeta"
-              />
-            </li>
+              <li
+                :key="m.id"
+                class="list-item meta-item"
+                tabindex="0"
+                :data-id="m.id"
+              >
+                <Metas
+                  :meta="m"
+                  @delete-meta="deleteMeta"
+                  @update-meta="updateMeta"
+                />
+              </li>
+            </div>
           </template>
         </draggable>
       </div>
@@ -90,22 +92,25 @@
         >
 
           <template #item="{ element: m }">
-            <li
+            <div class="meta-row">
+              <div class="item-header">
+                <button class="drag-handle" aria-label="Reordenar" title="Arraste para reordenar">↕</button>
+              </div>
+              <li
               :key="m.id"
               class="list-item meta-item"
               tabindex="0"
               :data-id="m.id"
-            >
-              <div class="item-header">
-                <button class="drag-handle" aria-label="Reordenar" title="Arraste para reordenar">↕</button>
-              </div>
-              <Metas
+              >
+                <Metas
                 :meta="m"
                 @delete-meta="deleteMeta"
                 @update-meta="updateMeta"
                 @reopen-meta="reopenMeta"
-              />
-            </li>
+                />
+              </li>
+            </div>
+            
           </template>
         </draggable>
       </div>
@@ -124,7 +129,7 @@ import type { SortableEvent } from "sortablejs"
 import type Meta from './interfaces/Meta';
 import RecuperarMetas from "./components/RecuperarMetas.vue";
 import ResetarMetas from "./components/ResetarMetas.vue";
-import { isDark, toggleTheme, THEME_KEY } from './main'
+import { isDark, toggleTheme, THEME_KEY } from './main';
 
 export default {}
 </script>
@@ -322,6 +327,22 @@ const reopenMeta = (id: number) => {
   background: var(--surface-1);
   border: 1px solid var(--border);
   transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+  display: grid;
+  grid-template-columns: 1fr; 
+  align-items: start;      
+}
+
+.meta-row {
+  display: flex;
+  flex-direction: row;
+  gap: 8px; 
+}
+.meta-row > :first-child {
+  flex: 0 0 24px;  
+}
+.meta-row > :last-child {
+  flex: 1 1 auto;   
+  min-width: 0;     
 }
 
 .meta-item:hover {

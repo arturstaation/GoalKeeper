@@ -6,7 +6,7 @@
     transition="dialog-transition"
   >
     <v-card class="gk-card" elevation="0">
-      <v-card-title class="gk-title">
+      <v-card-title class="gk-title gk-title-extra">
         <h1 class="h1" style="font-size: clamp(20px, 2.6vw, 26px); margin: 0;">
           {{ componentProperties.title }}
         </h1>
@@ -115,6 +115,15 @@ const emitAnswer = (answer: boolean) => {
 .dialog-transition-leave-to {
   opacity: 0;
   transform: translateY(6px) scale(0.98);
+}
+
+.gk-title-extra{
+  white-space: normal;        
+  overflow-wrap: anywhere;   
+  word-break: break-word;     
+  margin: 0;                  
+  flex: 1 1 auto;  
+  min-width: 0;   
 }
 
 :deep(.v-btn:focus-visible) {

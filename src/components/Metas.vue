@@ -5,7 +5,7 @@
         <div class="w-100" style="display:flex;flex-direction:column;gap:8px;">
           <div class="gk-title-row">
             <h1 class="h1" style="font-size: clamp(18px, 2.6vw, 24px); margin: 0;">{{ editableName }}</h1>
-            <Estado :estado="componentData.estado" readonly />
+            <Estado class="gk-estado" :estado="componentData.estado" readonly />
           </div>
 
           <div class="gk-progress-row">
@@ -39,13 +39,13 @@
                 placeholder="Digite o nome da meta"
               />
 
-              <Estado :estado="componentData.estado" @update-estado="updateEstado" />
+              <Estado class="gk-estado" :estado="componentData.estado" @update-estado="updateEstado" />
             </div>
 
             <div class="gk-description">
               <h4
                 v-if="!componentData.isEditDescription || (componentData.estado == Estados.Finalizado || componentData.estado == Estados.Abortado)"
-                class="gk-clickable-subtle"
+                class="gk-clickable-subtle gk-desc-wrap"
                 @click="changeDescription"
               >
                 {{ componentData.descricao ?? 'Descrição' }}
@@ -113,7 +113,7 @@
         </div>
 
         <div style="margin-top: var(--space-4);">
-          <template v-if="componentData.subMetas.length > 0">
+          <template v-if="notDeletedSubMetas > 0">
             <draggable
               v-model="componentData.subMetas"
               tag="ol"
@@ -132,19 +132,19 @@
               @end="updateOrder"
             >
               <template #item="{ element: sm }">
-                <div class="submeta-row">
+                <div class="submeta-row" v-if="!sm.isDeleted">
                   <div class="item-header">
                       <button class="drag-handle" aria-label="Reordenar" title="Arraste para reordenar">↕</button>
                   </div>
                   <li
                     :key="sm.id"
-                    v-if="!sm.isDeleted"
                     class="list-item submeta-item"
                     tabindex="0"
                     :data-id="sm.id"
                   >
                       <SubMetas
                         :sub-meta="sm"
+                        :parent-state="componentData.estado"
                         @delete-sub-meta="deleteSubMeta"
                         @update-sub-meta="updateSubMeta"
                       />
@@ -153,7 +153,7 @@
               </template>
             </draggable>
           </template>
-          <div v-else class="empty-drop">Sem SubMetas. Adicione uma para começar.</div>
+          <div v-else class="empty-drop">Sem SubMetas.</div>
         </div>
 
         <ConfirmDialog
@@ -172,7 +172,7 @@
 
 <script lang="ts">
 import draggable from "vuedraggable";
-import { ref, reactive, nextTick, watch } from 'vue';
+import { ref, reactive, nextTick, watch, computed } from 'vue';
 import type SubMeta from '@/interfaces/SubMeta';
 import type Meta from '@/interfaces/Meta';
 import SubMetas from './SubMetas.vue';
@@ -271,7 +271,6 @@ const deleteMeta = (answer : boolean) => {
     componentData.historico.push(`[${new Date().toLocaleString()}] - Meta ${componentProperties.meta.id}: ${componentData.nome} deletada`);
     componentData.estado = Estados.Deletado;
     updateMeta();
-    emits(EMetasEventsNames.onDeleteMeta, componentProperties.meta.id);
   }
   componentData.openConfirmationDialog = false;
 };
@@ -284,15 +283,34 @@ const changeName = () => {
 
 const cancelEdit = () => {
   componentData.isEdit = false;
-  if(editableName.value){
-    editableName.value = editableName.value.trim();
-    if(editableName.value != componentData.nome && editableName.value != ""){
-      componentData.historico.push(`[${new Date().toLocaleString()}] - Nome da meta ${componentProperties.meta.id} alterado de ${componentData.nome} para ${editableName.value}`);
-      componentData.nome = editableName.value;
-      updateMeta();
-      return
-    }
+
+  const metaId = componentProperties.meta.id;
+  const fallback = `Meta ${metaId}`;
+
+  const original = componentData.nome ?? fallback;
+  const raw = editableName.value;
+
+  const normalize = (v: string | undefined | null): string => {
+    if (v == null) return fallback;
+    const t = v.trim();
+    return t === '' ? fallback : t;
+  };
+
+  const incoming = normalize(raw);
+
+  if (incoming === original) {
+    editableName.value = original;
+    return;
   }
+
+  componentData.nome = incoming;
+
+  if (!componentData.historico) componentData.historico = [];
+  componentData.historico.push(
+    `[${new Date().toLocaleString()}] - Nome da meta ${metaId} alterado de ${original} para ${incoming}`
+  );
+
+  updateMeta();
   editableName.value = componentData.nome;
 };
 
@@ -304,7 +322,7 @@ const updateMeta = () =>{
     subMetas: componentData.subMetas,
     historico: componentData.historico,
     estado: componentData.estado,
-    isDeleted: false,
+    isDeleted: componentData.estado == Estados.Deletado,
     subMetasNumber: componentData.qntSubMetas,
   }
   emits(EMetasEventsNames.onUpdateMeta, updatedMeta);
@@ -314,7 +332,7 @@ const updateSubMeta = (subMeta : SubMeta) => {
   const index = componentData.subMetas.findIndex((sm : SubMeta) => sm.id === subMeta.id);
   if(index !== -1){
     componentData.subMetas[index] = subMeta;
-    componentData.historico = [...componentData.historico, ...componentData.subMetas[index].historico!];
+    componentData.historico = [...componentData.historico, ...(componentData.subMetas[index].historico ?? [])];
     componentData.subMetas[index].historico = undefined;
     updateMeta();
   }
@@ -332,16 +350,32 @@ const changeDescription = () =>{
 
 const cancelEditDescription = () => {
   componentData.isEditDescription = false;
-  if(editableDescription.value){
-    editableDescription.value = editableDescription.value.trim();
-    if(editableDescription.value != componentData.descricao){
-      if(!componentData.historico) componentData.historico = [];
-      componentData.historico.push(
-        `[${new Date().toLocaleString()}] - Descrição da Meta ${componentProperties.meta.id}: ${componentData.nome} alterado de ${componentData.descricao} para ${editableDescription.value}`
-      );
-      componentData.descricao = editableDescription.value;
-    }
+
+  const original = componentData.descricao; 
+  const raw = editableDescription.value;    
+  const normalize = (v: string | undefined): string | undefined => {
+    if (v == null) return undefined;
+    const t = v.trim();
+    return t === '' ? undefined : t;
+  };
+
+  const incoming = normalize(raw);
+  const before = normalize(original);
+
+  if (incoming === before) {
+    return;
   }
+
+  componentData.descricao = incoming;
+
+  if (!componentData.historico) componentData.historico = [];
+  const fmt = (v: string | undefined) => (v == null ? '(vazio)' : v);
+
+  componentData.historico.push(
+    `[${new Date().toLocaleString()}] - Descrição da Meta ${componentProperties.meta.id}: ` +
+    `${componentData.nome} alterado de ${fmt(before)} para ${fmt(incoming)}`
+  );
+
   updateMeta();
 };
 
@@ -410,6 +444,9 @@ const getPorcentagem = (): number => {
   if(qntSubMetas == 0) return 0
   return Math.trunc((qntSubMetasFinalizadas / qntSubMetas) * 100 * 100) / 100;
 }
+const notDeletedSubMetas = computed(() =>
+  componentData.subMetas.filter(m => !m.isDeleted).length
+);
 </script>
 
 <style scoped>
@@ -424,6 +461,15 @@ const getPorcentagem = (): number => {
 
 .gk-panel-title {
   border-bottom: 1px solid var(--color-border);
+  overflow: hidden; 
+}
+
+.gk-panel-title > .w-100 {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
 }
 
 .gk-title-row {
@@ -431,6 +477,12 @@ const getPorcentagem = (): number => {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
+  white-space: normal;        
+  overflow-wrap: anywhere;    
+  word-break: break-word;     
+  margin: 0;                  
+  flex: 1 1 auto;  
+  min-width: 0;    
 }
 
 .gk-progress-row {
@@ -445,18 +497,27 @@ const getPorcentagem = (): number => {
 }
 
 .gk-name-edit {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  flex-wrap: wrap;
+display: flex;
+align-items: center;
+justify-content: space-between; 
+gap: var(--space-4);
+flex-wrap: nowrap; 
+min-width: 0; 
+color: var(--color-text);
+}
+
+.title-wrap {
+flex: 1 1 auto;
+min-width: 0; 
 }
 
 .gk-clickable-title {
-  margin: 0;
-  color: var(--color-text);
-  cursor: pointer;
+margin: 0;
+white-space: normal; 
+overflow-wrap: anywhere; 
+word-break: break-word; 
 }
+
 .gk-clickable-title:hover {
   text-decoration: underline;
 }
@@ -474,12 +535,15 @@ const getPorcentagem = (): number => {
 }
 
 .submeta-item {
-  display: grid;
-  grid-template-columns: 24px 1fr; 
-  align-items: start;              
-  padding: var(--space-3);
+display: flex;
+flex-direction: row;
+align-items: stretch; 
+width: 100%; 
+gap: var(--space-3);
+padding: var(--space-3);
+box-sizing: border-box;
 }
-.submeta-content { min-width: 0; } 
+.submeta-item .submeta-content { flex: 1 1 100%; min-width: 0; }
 .submeta-item:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-1);
@@ -507,7 +571,15 @@ const getPorcentagem = (): number => {
 
 
 .input {
-  width: 100%;
+width: 100%;
+min-width: 0;
+max-width: 100%;
+}
+
+.gk-estado {
+flex: 0 0 auto;
+white-space: nowrap;
+min-width: max-content; 
 }
 
 .submeta-row {
