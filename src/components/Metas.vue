@@ -12,7 +12,7 @@
             <div class="progress" style="flex:1;">
               <div class="progress__bar" :style="`--progress:${getPorcentagem()}%`"></div>
             </div>
-            <div class="progress-text subtle">{{ `${getPorcentagem()}%` }}</div>
+            <div class="progress-text">{{ `${getPorcentagem()}%` }}</div>
           </div>
         </div>
       </v-expansion-panel-title>
@@ -22,43 +22,74 @@
 
           <div class="gk-header-edit">
             <div class="gk-name-edit">
-              <h2
-                v-if="!(componentData.isEdit) || (componentData.estado == Estados.Finalizado || componentData.estado == Estados.Abortado)"
-                class="gk-clickable-title"
-                @click="changeName"
-              >
-                {{ editableName }}
-              </h2>
-              <input
-                v-else
-                ref="editInput"
-                v-model="editableName"
-                class="input"
-                @blur="cancelEdit"
-                @keyup.enter="cancelEdit"
-                placeholder="Digite o nome da meta"
-              />
+              <span class="edit-inline">
+                <h2
+                  v-if="!(componentData.isEdit)"
+                  :class="[
+                    'gk-clickable-title',
+                    (componentData.estado == Estados.Finalizado || componentData.estado == Estados.Abortado) ? 'is-readonly' : ''
+                  ]"
+                  @click="(componentData.estado == Estados.Finalizado || componentData.estado == Estados.Abortado) ? null : changeName()"
+                >
+                  {{ editableName }}
+                </h2>
+
+                <input
+                  v-else
+                  ref="editInput"
+                  v-model="editableName"
+                  class="input"
+                  @blur="cancelEdit"
+                  @keyup.enter="cancelEdit"
+                  placeholder="Digite o nome da meta"
+                />
+
+                <v-icon
+                  v-if="!(componentData.isEdit) && !(componentData.estado == Estados.Finalizado || componentData.estado == Estados.Abortado)"
+                  icon="mdi-pencil"
+                  size="18"
+                  class="edit-icon-inline"
+                  title="Editar nome"
+                  @click.stop="changeName"
+                />
+              </span>
 
               <Estado class="gk-estado" :estado="componentData.estado" @update-estado="updateEstado" />
             </div>
 
             <div class="gk-description">
-              <h4
-                v-if="!componentData.isEditDescription || (componentData.estado == Estados.Finalizado || componentData.estado == Estados.Abortado)"
-                class="gk-clickable-subtle gk-desc-wrap"
-                @click="changeDescription"
-              >
-                {{ componentData.descricao ?? 'Descrição' }}
-              </h4>
-              <input
-                v-else
-                ref="editInputDescription"
-                v-model="editableDescription"
-                class="input"
-                @blur="cancelEditDescription"
-                @keyup.enter="cancelEditDescription"
-                placeholder="Digite a descrição"
-              />
+              <span class="edit-inline">
+                <h4
+                  v-if="!componentData.isEditDescription"
+                  :class="[
+                    'gk-clickable-subtle',
+                    'gk-desc-wrap',
+                    (componentData.estado == Estados.Finalizado || componentData.estado == Estados.Abortado) ? 'is-readonly' : ''
+                  ]"
+                  @click="(componentData.estado == Estados.Finalizado || componentData.estado == Estados.Abortado) ? null : changeDescription()"
+                >
+                  {{ componentData.descricao ?? 'Descrição' }}
+                </h4>
+
+                <input
+                  v-else
+                  ref="editInputDescription"
+                  v-model="editableDescription"
+                  class="input"
+                  @blur="cancelEditDescription"
+                  @keyup.enter="cancelEditDescription"
+                  placeholder="Digite a descrição"
+                />
+
+                <v-icon
+                  v-if="!componentData.isEditDescription && !(componentData.estado == Estados.Finalizado || componentData.estado == Estados.Abortado)"
+                  icon="mdi-pencil"
+                  size="18"
+                  class="edit-icon-inline"
+                  title="Editar descrição"
+                  @click.stop="changeDescription"
+                />
+              </span>
             </div>
           </div>
 
@@ -472,6 +503,10 @@ const notDeletedSubMetas = computed(() =>
   min-width: 0;
 }
 
+.gk-panel-title :deep(.v-expansion-panel-title__icon .v-icon) {
+  color: var(--color-text); 
+}
+
 .gk-title-row {
   display: flex;
   align-items: center;
@@ -558,6 +593,8 @@ box-sizing: border-box;
 
 
 .progress-text {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
   min-width: 56px;
   text-align: right;
 }
@@ -593,5 +630,39 @@ min-width: max-content;
 .submeta-row > :last-child {
   flex: 1 1 auto;   
   min-width: 0;     
+}
+
+.edit-inline {
+  display: inline;            
+}
+
+.gk-clickable-title,
+.gk-clickable-subtle {
+  display: inline;            
+  white-space: normal;        
+  word-break: break-word;     
+  overflow-wrap: anywhere;
+  margin: 0;
+}
+
+.edit-icon-inline {
+  display: inline-block;
+  vertical-align: baseline;   
+  margin-left: 6px;           
+  color: var(--color-text-muted);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.edit-icon-inline:hover {
+  color: var(--color-text);
+}
+
+.edit-inline:hover .edit-icon-inline {
+  opacity: 1;
+}
+
+.is-readonly {
+  cursor: default;
 }
 </style>

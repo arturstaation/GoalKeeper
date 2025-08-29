@@ -1,55 +1,68 @@
 <template>
   <div class="gk-submeta">
     <div class="gk-header">
-      <h3
-        v-if="!componentData.isEdit"
-        class="gk-clickable-title gk-title-wrap"
-        @click="changeName"
-      >
-        {{ componentData.nome }}
-      </h3>
+      <span class="edit-inline gk-title-line">
+        <h3
+          v-if="!componentData.isEdit"
+          class="gk-clickable-title gk-title-wrap"
+          :class="(componentProperties.parentState == Estados.Finalizado || componentProperties.parentState == Estados.Abortado) ? 'is-readonly' : ''"
+          @click="(componentProperties.parentState == Estados.Finalizado || componentProperties.parentState == Estados.Abortado) ? null : changeName()"
+        >
+          {{ componentData.nome }}
+        </h3>
 
-      <input
-        v-else
-        ref="editInput"
-        v-model="editableName"
-        class="input"
-        @blur="cancelEdit"
-        @keyup.enter="cancelEdit"
-        placeholder="Digite o nome da submeta"
-      />
+        <input
+          v-else
+          ref="editInput"
+          v-model="editableName"
+          class="input"
+          @blur="cancelEdit"
+          @keyup.enter="cancelEdit"
+          placeholder="Digite o nome da submeta"
+        />
+
+        <v-icon
+          v-if="!componentData.isEdit && !(componentProperties.parentState == Estados.Finalizado || componentProperties.parentState == Estados.Abortado)"
+          icon="mdi-pencil"
+          size="18"
+          class="edit-icon-inline"
+          title="Editar nome"
+          @click.stop="changeName"
+        />
+      </span>
 
       <Estado class="gk-estado" :estado="componentData.estado" @update-estado="updateEstado" />
     </div>
 
-    <h5
-      v-if="!componentData.isEditDescription"
-      class="gk-clickable-subtle gk-desc-wrap"
-      @click="changeDescription"
-    >
-      {{ componentData.descricao ?? 'Descrição' }}
-    </h5>
-    <input
-      v-else
-      ref="editInputDescription"
-      v-model="editableName"
-      class="input"
-      @blur="cancelEditDescription"
-      @keyup.enter="cancelEditDescription"
-      placeholder="Digite a descrição"
-    />
-
-    <div class="gk-actions" v-if="componentProperties.parentState != Estados.Finalizado && componentProperties.parentState != Estados.Abortado">
-      <v-btn
-        class="btn"
-        prepend-icon="mdi-delete"
-        :style="{ background: 'var(--color-danger)' }"
-        rounded
-        @click="deleteSubMeta"
+    <span class="edit-inline">
+      <h5
+        v-if="!componentData.isEditDescription"
+        class="gk-clickable-subtle gk-desc-wrap"
+        :class="(componentProperties.parentState == Estados.Finalizado || componentProperties.parentState == Estados.Abortado) ? 'is-readonly' : ''"
+        @click="(componentProperties.parentState == Estados.Finalizado || componentProperties.parentState == Estados.Abortado) ? null : changeDescription()"
       >
-        Deletar SubMeta
-      </v-btn>
-    </div>
+        {{ componentData.descricao ?? 'Descrição' }}
+      </h5>
+
+      <input
+        v-else
+        ref="editInputDescription"
+        v-model="editableName"
+        class="input"
+        @blur="cancelEditDescription"
+        @keyup.enter="cancelEditDescription"
+        placeholder="Digite a descrição"
+      />
+
+      <v-icon
+        v-if="!componentData.isEditDescription && !(componentProperties.parentState == Estados.Finalizado || componentProperties.parentState == Estados.Abortado)"
+        icon="mdi-pencil"
+        size="18"
+        class="edit-icon-inline"
+        title="Editar descrição"
+        @click.stop="changeDescription"
+      />
+    </span>
   </div>
 </template>
 
@@ -290,5 +303,49 @@ white-space: nowrap;
   letter-spacing: 0;
   font-weight: 600;
   border-radius: var(--radius-md);
+}
+
+.edit-inline {
+  display: inline;
+}
+
+.gk-title-line {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.gk-clickable-title,
+.gk-clickable-subtle {
+  display: inline;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  margin: 0;
+}
+
+.edit-icon-inline {
+  display: inline-block;
+  vertical-align: baseline;
+  margin-left: 6px;
+  color: var(--color-text-muted);  
+  cursor: pointer;
+  line-height: 1;
+}
+.edit-icon-inline:hover {
+  color: var(--color-text);        
+}
+
+.is-readonly {
+  cursor: default;
+}
+
+.gk-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: nowrap;
+  min-width: 0;
+  color: var(--color-text);
 }
 </style>
